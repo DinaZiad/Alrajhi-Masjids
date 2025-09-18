@@ -1,0 +1,535 @@
+{
+    "islamic_theme_design_system": {
+      "metadata": {
+        "name": "Holy Mosques Management Theme",
+        "version": "3.0.0",
+        "description": "Unified design system for Islamic mosque management applications, based on the welcome page design. Clean, professional, and accessible interface for the General Presidency for the Affairs of the Two Holy Mosques.",
+        "target_audience": "Islamic religious institutions, mosque management systems, government portals",
+        "cultural_context": "Saudi Arabian Islamic architecture, government portal standards, and modern Islamic design principles.",
+        "rtl_support": true,
+        "primary_language": "Arabic",
+        "design_inspiration": "Welcome page design system"
+      },
+      
+      "design_principles": {
+        "core_values": [
+          "Clean and professional government portal aesthetic",
+          "Accessibility and usability for all users",
+          "Consistent visual hierarchy and spacing",
+          "Modern Islamic design with traditional elements",
+          "Responsive and mobile-friendly design"
+        ],
+        "visual_hierarchy": [
+          "Clear header with logo and title",
+          "Organized content sections with proper spacing",
+          "Consistent button and form styling",
+          "Readable typography with proper contrast"
+        ],
+        "user_experience": [
+          "Intuitive navigation with clear visual feedback",
+          "Consistent interaction patterns",
+          "Accessible color contrast and touch targets",
+          "Smooth transitions and hover effects"
+        ]
+      },
+  
+      "color_palette": {
+        "primary_colors": {
+          "deep_forest": {
+            "hex": "#174032",
+            "rgb": "23, 64, 50",
+            "usage": "Primary backgrounds, headers, main text",
+            "meaning": "Professional green, government authority"
+          },
+          "warm_gold": {
+            "hex": "#d4af37",
+            "rgb": "212, 175, 55",
+            "usage": "Accents, highlights, icons, borders",
+            "meaning": "Islamic gold, luxury, and importance"
+          }
+        },
+        "neutral_colors": {
+          "soft_cream": {
+            "hex": "#faf9f6",
+            "rgb": "250, 249, 246",
+            "usage": "Background, light surfaces",
+            "meaning": "Clean, professional background"
+          },
+          "pure_white": {
+            "hex": "#ffffff",
+            "rgb": "255, 255, 255",
+            "usage": "Cards, buttons, content areas",
+            "meaning": "Purity and clarity"
+          },
+          "charcoal_dark": {
+            "hex": "#2c3e50",
+            "rgb": "44, 62, 80",
+            "usage": "Primary text, readable content",
+            "meaning": "Professional text color"
+          }
+        },
+        "accent_colors": {
+          "border_subtle": {
+            "hex": "#e8e8e8",
+            "usage": "Borders, dividers, subtle elements"
+          },
+          "text_secondary": {
+            "hex": "#444",
+            "usage": "Secondary text, descriptions"
+          },
+          "text_muted": {
+            "hex": "#888",
+            "usage": "Footer text, metadata"
+          }
+        },
+        "color_combinations": {
+          "primary_gradient": "linear-gradient(135deg, #174032 0%, #174032 100%)",
+          "gold_gradient": "linear-gradient(135deg, #d4af37 0%, #d4af37 100%)",
+          "background_gradient": "linear-gradient(135deg, #faf9f6 0%, #faf9f6 100%)",
+          "card_gradient": "linear-gradient(145deg, #ffffff 0%, #ffffff 100%)"
+        }
+      },
+  
+      "typography": {
+        "font_families": {
+          "primary_arabic": {
+            "name": "Cairo",
+            "fallback": "sans-serif",
+            "usage": "All text elements, headers, body text",
+            "weights": [400, 700, 900],
+            "characteristics": "Modern Arabic sans-serif, professional and readable"
+          },
+          "secondary_arabic": {
+            "name": "Amiri",
+            "fallback": "serif",
+            "usage": "Special headers, decorative text",
+            "weights": [700],
+            "characteristics": "Classical Arabic typography for emphasis"
+          }
+        },
+        "font_scales": {
+          "display": {
+            "size": "1.35rem",
+            "weight": 900,
+            "line_height": 1.2,
+            "usage": "Main page titles, logo text"
+          },
+          "h1": {
+            "size": "1.25rem",
+            "weight": 900,
+            "line_height": 1.3,
+            "usage": "Section headers"
+          },
+          "h2": {
+            "size": "1.15rem",
+            "weight": 900,
+            "line_height": 1.4,
+            "usage": "Subsection headers"
+          },
+          "body": {
+            "size": "1.05rem",
+            "weight": 400,
+            "line_height": 1.5,
+            "usage": "Regular text content"
+          },
+          "small": {
+            "size": "0.95rem",
+            "weight": 400,
+            "line_height": 1.5,
+            "usage": "Footer text, metadata"
+          }
+        },
+        "text_styling": {
+          "headers": {
+            "font_family": "Cairo",
+            "color": "#174032",
+            "text_shadow": "none",
+            "letter_spacing": "0.5px",
+            "usage": "All header elements"
+          },
+          "body": {
+            "font_family": "Cairo",
+            "color": "#2c3e50",
+            "usage": "Body and UI text"
+          },
+          "secondary": {
+            "font_family": "Cairo",
+            "color": "#444",
+            "usage": "Secondary text, descriptions"
+          }
+        }
+      },
+  
+      "layout_system": {
+        "containers": {
+          "max_width": "1400px",
+          "padding": {
+            "desktop": "2vw",
+            "tablet": "1.2rem",
+            "mobile": "0.5rem"
+          },
+          "margins": {
+            "section": "2.2rem",
+            "component": "1.1rem",
+            "element": "0.7rem"
+          }
+        },
+        "grid_system": {
+          "columns": 12,
+          "gutters": "1.1rem",
+          "breakpoints": {
+            "xs": "0px",
+            "sm": "600px",
+            "md": "1000px",
+            "lg": "1200px",
+            "xl": "1400px"
+          }
+        },
+        "spacing_scale": {
+          "xs": "0.5rem",
+          "sm": "0.7rem",
+          "md": "1.1rem",
+          "lg": "2.2rem",
+          "xl": "4.5rem",
+          "xxl": "6vw"
+        },
+        "border_radius": {
+          "small": "8px",
+          "medium": "10px",
+          "large": "50px",
+          "xlarge": "50px"
+        },
+        "borders": {
+          "thin": "2px solid #e8e8e8",
+          "gold": "2px solid #d4af37"
+        }
+      },
+  
+      "component_library": {
+        "headers": {
+          "main_header": {
+            "background": "#174032",
+            "padding": "1.2rem 0 1.1rem 0",
+            "border_radius": "0",
+            "box_shadow": "none",
+            "elements": {
+              "logo_icon": {
+                "size": "40px",
+                "color": "#d4af37",
+                "background": "#174032",
+                "border": "2px solid #d4af37",
+                "border_radius": "10px"
+              },
+              "logo_title": {
+                "font": "Cairo",
+                "size": "1.35rem",
+                "color": "#ffffff",
+                "font_weight": 900,
+                "letter_spacing": "0.5px"
+              },
+              "gold_accent": {
+                "height": "4px",
+                "background": "#d4af37",
+                "border_radius": "0 0 8px 8px"
+              }
+            }
+          }
+        },
+        "cards": {
+          "content_card": {
+            "background": "#ffffff",
+            "border": "none",
+            "border_radius": "0",
+            "box_shadow": "none",
+            "padding": "0",
+            "font_family": "Cairo",
+            "color": "#2c3e50"
+          }
+        },
+        "buttons": {
+          "primary_button": {
+            "background": "#d4af37",
+            "color": "#174032",
+            "padding": "1rem 2.5rem",
+            "border_radius": "50px",
+            "font_weight": 900,
+            "font_size": "1.13rem",
+            "box_shadow": "0 4px 16px rgba(212, 175, 55, 0.13)",
+            "hover_transform": "none",
+            "hover_background": "#174032",
+            "hover_color": "#d4af37",
+            "hover_outline": "2px solid #d4af37"
+          },
+          "secondary_button": {
+            "background": "#ffffff",
+            "color": "#174032",
+            "border": "2px solid #e8e8e8",
+            "border_radius": "10px",
+            "padding": "1.1rem 0.5rem",
+            "font_weight": 700,
+            "font_size": "1.13rem",
+            "hover_border": "#d4af37",
+            "hover_background": "#fffbe9",
+            "hover_shadow": "0 4px 16px rgba(212, 175, 55, 0.08)"
+          },
+          "action_buttons": {
+            "edit": {
+              "background": "#d4af37",
+              "color": "#174032"
+            },
+            "view": {
+              "background": "#174032",
+              "color": "#ffffff"
+            },
+            "delete": {
+              "background": "#e74c3c",
+              "color": "#ffffff"
+            }
+          }
+        },
+        "forms": {
+          "input_field": {
+            "background": "#ffffff",
+            "border": "2px solid #e8e8e8",
+            "border_radius": "10px",
+            "padding": "1.1rem 0.5rem",
+            "font_family": "Cairo",
+            "font_size": "1.05rem",
+            "color": "#2c3e50",
+            "focus_border": "#d4af37",
+            "focus_background": "#fffbe9",
+            "focus_shadow": "0 4px 16px rgba(212, 175, 55, 0.08)"
+          },
+          "label": {
+            "font_family": "Cairo",
+            "font_weight": 700,
+            "color": "#174032",
+            "font_size": "1.05rem"
+          }
+        },
+        "tables": {
+          "header": {
+            "background": "#174032",
+            "color": "#d4af37",
+            "padding": "1.1rem 0.5rem",
+            "font_weight": 700,
+            "border_radius": "10px 10px 0 0"
+          },
+          "rows": {
+            "hover_background": "#fffbe9",
+            "hover_transform": "none",
+            "border_bottom": "1px solid #e8e8e8"
+          }
+        },
+        "status_badges": {
+          "active": {
+            "background": "#d4af37",
+            "color": "#174032",
+            "icon": "fa-check-circle",
+            "border_radius": "50px",
+            "font_size": "0.95rem",
+            "padding": "0.5rem 1rem",
+            "box_shadow": "0 2px 8px rgba(212, 175, 55, 0.2)"
+          },
+          "inactive": {
+            "background": "#e8e8e8",
+            "color": "#2c3e50",
+            "icon": "fa-pause-circle",
+            "border_radius": "50px",
+            "font_size": "0.95rem",
+            "padding": "0.5rem 1rem"
+          }
+        }
+      },
+  
+      "animations": {
+        "entrance_animations": {
+          "fade_in": {
+            "duration": "0.3s",
+            "easing": "ease-in-out",
+            "transform": "opacity 0 to 1"
+          }
+        },
+        "hover_animations": {
+          "button_hover": {
+            "transform": "none",
+            "duration": "0.2s",
+            "easing": "ease-in-out"
+          },
+          "card_hover": {
+            "transform": "none",
+            "duration": "0.2s",
+            "easing": "ease-in-out"
+          }
+        },
+        "micro_interactions": {
+          "focus_indicator": {
+            "outline": "2px solid #d4af37",
+            "outline_offset": "2px"
+          }
+        }
+      },
+  
+      "islamic_elements": {
+        "iconography": {
+          "primary_icons": {
+            "mosque": "fas fa-mosque",
+            "kaaba": "fas fa-kaaba",
+            "bullhorn": "fas fa-bullhorn",
+            "calendar": "fas fa-calendar-check",
+            "tasks": "fas fa-tasks"
+          },
+          "functional_icons": {
+            "add": "fas fa-plus",
+            "edit": "fas fa-edit",
+            "view": "fas fa-eye",
+            "delete": "fas fa-trash",
+            "status": "fas fa-toggle-on"
+          }
+        },
+        "patterns": {
+          "geometric_overlay": {
+            "pattern": "none",
+            "opacity": 0,
+            "position": "none",
+            "z_index": 0
+          }
+        },
+        "sacred_text": {
+          "bismillah": {
+            "arabic": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+            "font": "Cairo",
+            "placement": "optional",
+            "styling": "standard"
+          }
+        }
+      },
+  
+      "responsive_design": {
+        "mobile_first": true,
+        "breakpoint_strategy": "progressive_enhancement",
+        "mobile_optimizations": {
+          "touch_targets": "minimum 44px",
+          "font_scaling": "responsive",
+          "spacing_reduction": "50% on mobile",
+          "simplified_layouts": "single column on mobile"
+        },
+        "tablet_optimizations": {
+          "grid_adaptation": "2 columns",
+          "touch_friendly": "larger interactive elements",
+          "orientation_handling": "landscape and portrait"
+        },
+        "desktop_enhancements": {
+          "hover_states": "all interactive elements",
+          "larger_spacing": "full spacing scale",
+          "advanced_animations": "simple transitions"
+        }
+      },
+  
+      "accessibility": {
+        "color_contrast": {
+          "minimum_ratio": "4.5:1",
+          "preferred_ratio": "7:1",
+          "text_on_gold": "Use dark text (#174032)",
+          "text_on_green": "Use light text (#ffffff)"
+        },
+        "keyboard_navigation": {
+          "focus_indicators": "2px solid #d4af37",
+          "tab_order": "logical flow",
+          "skip_links": "provided for main content"
+        },
+        "screen_readers": {
+          "alt_texts": "descriptive for all images",
+          "aria_labels": "all interactive elements",
+          "semantic_html": "proper heading hierarchy"
+        },
+        "rtl_support": {
+          "text_direction": "rtl",
+          "layout_mirroring": "complete",
+          "icon_flipping": "directional icons only"
+        }
+      },
+  
+      "performance": {
+        "font_loading": {
+          "strategy": "font-display: swap",
+          "preload": "critical fonts only",
+          "subset": "Arabic + Latin characters"
+        },
+        "image_optimization": {
+          "svg_icons": "prefer over raster",
+          "lazy_loading": "below fold images",
+          "responsive_images": "multiple sizes"
+        },
+        "css_optimization": {
+          "critical_css": "inline above fold styles",
+          "unused_css": "remove in production",
+          "css_minification": "enabled"
+        }
+      },
+  
+      "cultural_guidelines": {
+        "design_sensitivity": [
+          "Use geometric and calligraphic patterns only",
+          "Respect Islamic color symbolism (green = authority, gold = luxury)",
+          "Maintain dignified and professional tone in all text",
+          "Use appropriate Islamic icons and symbols"
+        ],
+        "content_guidelines": [
+          "Use formal Arabic for official content",
+          "Include Islamic greetings where appropriate",
+          "Respect prayer times in notification scheduling",
+          "Maintain professional government portal standards"
+        ],
+        "interaction_patterns": [
+          "Gentle and professional animations",
+          "Avoid aggressive or flashy transitions",
+          "Use confirmations for destructive actions",
+          "Provide clear feedback for all actions"
+        ]
+      },
+  
+      "implementation_checklist": {
+        "setup": [
+          "Import required Google Fonts (Cairo, Amiri)",
+          "Set up CSS custom properties for color system",
+          "Configure RTL support in CSS and HTML",
+          "Add FontAwesome icon set for functional icons"
+        ],
+        "components": [
+          "Create main header with logo icon and gold accent",
+          "Implement content cards with clean white background",
+          "Style buttons with consistent border radius and colors",
+          "Add form inputs with proper focus states",
+          "Create status badges with gold/green theme"
+        ],
+        "interactions": [
+          "Add hover animations for buttons",
+          "Implement focus indicators",
+          "Create smooth transitions between states",
+          "Add loading states for async actions"
+        ],
+        "testing": [
+          "Test on all breakpoints",
+          "Verify RTL layout correctness",
+          "Check color contrast ratios",
+          "Validate accessibility features",
+          "Test with Arabic content"
+        ]
+      },
+  
+      "code_patterns": {
+        "css_variables": {
+          "setup": ":root { --deep-forest: #174032; --warm-gold: #d4af37; --soft-cream: #faf9f6; --pure-white: #ffffff; --charcoal-dark: #2c3e50; --border-subtle: #e8e8e8; }",
+          "usage": "background: var(--deep-forest);"
+        },
+        "gradient_patterns": {
+          "primary": "linear-gradient(135deg, var(--deep-forest) 0%, var(--deep-forest) 100%)",
+          "gold": "linear-gradient(135deg, var(--warm-gold) 0%, var(--warm-gold) 100%)"
+        },
+        "animation_keyframes": {
+          "fade_in": "@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }"
+        }
+      }
+    }
+  }

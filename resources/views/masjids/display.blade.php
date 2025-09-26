@@ -539,12 +539,28 @@ function dash($val) {
                 // Calculate approximate Hijri date
                 $startDate = \Carbon\Carbon::parse($hijriYear->start_date);
                 $daysDiff = $currentDate->diffInDays($startDate);
-                $hijriDay = $daysDiff % 30 + 1; // Approximate day in month
-                $hijriMonth = intval($daysDiff / 30) + 1; // Approximate month
-                if ($hijriMonth > 12) {
-                    $hijriMonth = $hijriMonth % 12;
-                    if ($hijriMonth == 0) $hijriMonth = 12;
+                
+                // Handle negative daysDiff (when current date is before start date)
+                if ($daysDiff < 0) {
+                    $daysDiff = abs($daysDiff);
+                    $hijriDay = 30 - ($daysDiff % 30);
+                    if ($hijriDay == 0) $hijriDay = 30;
+                    $hijriMonth = 12 - intval($daysDiff / 30);
+                    if ($hijriMonth <= 0) {
+                        $hijriMonth = 12 + ($hijriMonth % 12);
+                        if ($hijriMonth == 0) $hijriMonth = 12;
+                    }
+                } else {
+                    $hijriDay = $daysDiff % 30 + 1; // Approximate day in month
+                    $hijriMonth = intval($daysDiff / 30) + 1; // Approximate month
+                    if ($hijriMonth > 12) {
+                        $hijriMonth = $hijriMonth % 12;
+                        if ($hijriMonth == 0) $hijriMonth = 12;
+                    }
                 }
+                
+                // Ensure month is within valid range (1-12)
+                $hijriMonth = max(1, min(12, $hijriMonth));
                 $hijriMonthName = $arabicMonths[$hijriMonth];
                 $hijriYearNum = $hijriYear->year;
             } else {

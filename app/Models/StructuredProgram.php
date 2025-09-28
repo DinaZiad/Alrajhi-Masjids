@@ -64,18 +64,6 @@ class StructuredProgram extends Model
         'end_time' => 'datetime:H:i',
         // Prayer fields casting
         'date' => 'date',
-        'adhan_fajr' => 'datetime:H:i',
-        'iqama_fajr' => 'datetime:H:i',
-        'adhan_dhuhr' => 'datetime:H:i',
-        'iqama_dhuhr' => 'datetime:H:i',
-        'adhan_asr' => 'datetime:H:i',
-        'iqama_asr' => 'datetime:H:i',
-        'adhan_maghrib' => 'datetime:H:i',
-        'iqama_maghrib' => 'datetime:H:i',
-        'adhan_isha' => 'datetime:H:i',
-        'iqama_isha' => 'datetime:H:i',
-        'adhan_friday' => 'datetime:H:i',
-        'iqama_friday' => 'datetime:H:i',
     ];
 
     /**
@@ -224,5 +212,75 @@ class StructuredProgram extends Model
     public function scopeBySection($query, $sectionId)
     {
         return $query->where('section_id', $sectionId);
+    }
+
+    /**
+     * Get formatted time for HTML time input
+     */
+    public function getFormattedTimeForField($field)
+    {
+        $time = $this->getRawOriginal($field);
+        return $time ? substr($time, 0, 5) : null; // Return HH:MM format
+    }
+
+    // Accessors for prayer times
+    public function getAdhanFajrFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('adhan_fajr');
+    }
+
+    public function getIqamaFajrFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('iqama_fajr');
+    }
+
+    public function getAdhanDhuhrFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('adhan_dhuhr');
+    }
+
+    public function getIqamaDhuhrFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('iqama_dhuhr');
+    }
+
+    public function getAdhanAsrFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('adhan_asr');
+    }
+
+    public function getIqamaAsrFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('iqama_asr');
+    }
+
+    public function getAdhanMaghribFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('adhan_maghrib');
+    }
+
+    public function getIqamaMaghribFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('iqama_maghrib');
+    }
+
+    public function getAdhanIshaFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('adhan_isha');
+    }
+
+    public function getIqamaIshaFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('iqama_isha');
+    }
+
+    public function getAdhanFridayFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('adhan_friday');
+    }
+
+    public function getIqamaFridayFormattedAttribute()
+    {
+        return $this->getFormattedTimeForField('iqama_friday');
     }
 }

@@ -204,11 +204,13 @@ class StructuredProgramController extends Controller
      */
     public function store(Request $request)
     {
-        // Check if this is an Imama program type
+        // Check program type
         $isImama = false;
+        $isHalaqat = false;
         if ($request->filled('program_type_id')) {
             $programType = ProgramType::find($request->program_type_id);
             $isImama = $programType && $programType->name === 'إمامة';
+            $isHalaqat = $programType && $programType->name === 'حلقة تحفيظ';
         }
 
         // Base validation rules
@@ -217,40 +219,15 @@ class StructuredProgramController extends Controller
             'program_type_id' => 'nullable|exists:program_types,id',
         ];
         
-        // Add title and period validation based on program type
-        if (!$isImama) {
-            $rules['title'] = 'required|string|max:255';
-            $rules['period'] = 'required|string|max:100';
-        } else {
+        // Add title validation based on program type
+        if ($isImama) {
             $rules['title'] = 'nullable|string|max:255';
-            $rules['period'] = 'nullable|string|max:100';
+        } else {
+            $rules['title'] = 'required|string|max:255';
         }
 
         // Add conditional validation rules based on program type
-        if (!$isImama) {
-            // These fields are required for non-Imama programs
-            $rules = array_merge($rules, [
-                'section_id' => 'required|exists:sections,id',
-                'major_id' => 'required|exists:majors,id',
-                'book_id' => 'required|exists:books,id',
-                'level_id' => 'required|exists:levels,id',
-                'teacher_id' => 'required|exists:teachers,id',
-                'location_id' => 'required|exists:buildings,id',
-                'weekdays' => 'required|array|min:1',
-                'weekdays.*' => 'string|in:sunday,monday,tuesday,wednesday,thursday,friday,saturday',
-                'lesson' => 'required|string|max:255',
-                'start_time' => 'required|date_format:H:i',
-                'end_time' => 'required|date_format:H:i|after:start_time',
-                'language' => 'required|string|max:100',
-                'sign_language_support' => 'boolean',
-                'broadcast_link' => 'nullable|url|max:500',
-                'description' => 'nullable|string',
-
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-                'notes' => 'nullable|string',
-            ]);
-        } else {
+        if ($isImama) {
             // These fields are optional for Imama programs
             $rules = array_merge($rules, [
                 'section_id' => 'nullable|exists:sections,id',
@@ -271,6 +248,51 @@ class StructuredProgramController extends Controller
                 'status' => 'nullable|string|in:لم تبدأ,في الموعد,بدأت,تأجلت,اختبار,انتهت',
                 'start_date' => 'nullable|date',
                 'end_date' => 'nullable|date|after_or_equal:start_date',
+                'notes' => 'nullable|string',
+            ]);
+        } elseif ($isHalaqat) {
+            // These fields are required for Halaqat programs (but hide some academic fields)
+            $rules = array_merge($rules, [
+                'section_id' => 'nullable|exists:sections,id',
+                'major_id' => 'nullable|exists:majors,id',
+                'book_id' => 'nullable|exists:books,id',
+                'level_id' => 'required|exists:levels,id',
+                'teacher_id' => 'required|exists:teachers,id',
+                'location_id' => 'required|exists:buildings,id',
+                'weekdays' => 'required|array|min:1',
+                'weekdays.*' => 'string|in:sunday,monday,tuesday,wednesday,thursday,friday,saturday',
+                'lesson' => 'nullable|string|max:255',
+                'start_time' => 'required|date_format:H:i',
+                'end_time' => 'required|date_format:H:i|after:start_time',
+                'language' => 'required|string|max:100',
+                'sign_language_support' => 'boolean',
+                'broadcast_link' => 'nullable|url|max:500',
+                'description' => 'nullable|string',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'notes' => 'nullable|string',
+            ]);
+        } else {
+            // These fields are required for regular programs
+            $rules = array_merge($rules, [
+                'section_id' => 'required|exists:sections,id',
+                'major_id' => 'required|exists:majors,id',
+                'book_id' => 'required|exists:books,id',
+                'level_id' => 'required|exists:levels,id',
+                'teacher_id' => 'required|exists:teachers,id',
+                'location_id' => 'required|exists:buildings,id',
+                'weekdays' => 'required|array|min:1',
+                'weekdays.*' => 'string|in:sunday,monday,tuesday,wednesday,thursday,friday,saturday',
+                'lesson' => 'required|string|max:255',
+                'start_time' => 'required|date_format:H:i',
+                'end_time' => 'required|date_format:H:i|after:start_time',
+                'language' => 'required|string|max:100',
+                'sign_language_support' => 'boolean',
+                'broadcast_link' => 'nullable|url|max:500',
+                'description' => 'nullable|string',
+
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
                 'notes' => 'nullable|string',
             ]);
         }
@@ -311,7 +333,6 @@ class StructuredProgramController extends Controller
             'level_id.required' => 'المستوى مطلوب',
             'teacher_id.required' => 'المعلم مطلوب',
             'location_id.required' => 'المبنى مطلوب',
-            'period.required' => 'الفترة مطلوبة',
             'weekdays.required' => 'أيام الأسبوع مطلوبة',
             'weekdays.min' => 'يجب اختيار يوم واحد على الأقل',
             'lesson.required' => 'الدرس مطلوب',
@@ -436,11 +457,13 @@ class StructuredProgramController extends Controller
      */
     public function update(Request $request, StructuredProgram $structuredProgram)
     {
-        // Check if this is an Imama program type
+        // Check program type
         $isImama = false;
+        $isHalaqat = false;
         if ($request->filled('program_type_id')) {
             $programType = ProgramType::find($request->program_type_id);
             $isImama = $programType && $programType->name === 'إمامة';
+            $isHalaqat = $programType && $programType->name === 'حلقة تحفيظ';
         }
 
         // Base validation rules
@@ -449,40 +472,15 @@ class StructuredProgramController extends Controller
             'program_type_id' => 'nullable|exists:program_types,id',
         ];
         
-        // Add title and period validation based on program type
-        if (!$isImama) {
-            $rules['title'] = 'required|string|max:255';
-            $rules['period'] = 'required|string|max:100';
-        } else {
+        // Add title validation based on program type
+        if ($isImama) {
             $rules['title'] = 'nullable|string|max:255';
-            $rules['period'] = 'nullable|string|max:100';
+        } else {
+            $rules['title'] = 'required|string|max:255';
         }
 
         // Add conditional validation rules based on program type
-        if (!$isImama) {
-            // These fields are required for non-Imama programs
-            $rules = array_merge($rules, [
-                'section_id' => 'required|exists:sections,id',
-                'major_id' => 'required|exists:majors,id',
-                'book_id' => 'required|exists:books,id',
-                'level_id' => 'required|exists:levels,id',
-                'teacher_id' => 'required|exists:teachers,id',
-                'location_id' => 'required|exists:buildings,id',
-                'weekdays' => 'required|array|min:1',
-                'weekdays.*' => 'string|in:sunday,monday,tuesday,wednesday,thursday,friday,saturday',
-                'lesson' => 'required|string|max:255',
-                'start_time' => 'required|date_format:H:i',
-                'end_time' => 'required|date_format:H:i|after:start_time',
-                'language' => 'required|string|max:100',
-                'sign_language_support' => 'boolean',
-                'broadcast_link' => 'nullable|url|max:500',
-                'description' => 'nullable|string',
-
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-                'notes' => 'nullable|string',
-            ]);
-        } else {
+        if ($isImama) {
             // These fields are optional for Imama programs
             $rules = array_merge($rules, [
                 'section_id' => 'nullable|exists:sections,id',
@@ -503,6 +501,51 @@ class StructuredProgramController extends Controller
                 'status' => 'nullable|string|in:لم تبدأ,في الموعد,بدأت,تأجلت,اختبار,انتهت',
                 'start_date' => 'nullable|date',
                 'end_date' => 'nullable|date|after_or_equal:start_date',
+                'notes' => 'nullable|string',
+            ]);
+        } elseif ($isHalaqat) {
+            // These fields are required for Halaqat programs (but hide some academic fields)
+            $rules = array_merge($rules, [
+                'section_id' => 'nullable|exists:sections,id',
+                'major_id' => 'nullable|exists:majors,id',
+                'book_id' => 'nullable|exists:books,id',
+                'level_id' => 'required|exists:levels,id',
+                'teacher_id' => 'required|exists:teachers,id',
+                'location_id' => 'required|exists:buildings,id',
+                'weekdays' => 'required|array|min:1',
+                'weekdays.*' => 'string|in:sunday,monday,tuesday,wednesday,thursday,friday,saturday',
+                'lesson' => 'nullable|string|max:255',
+                'start_time' => 'required|date_format:H:i',
+                'end_time' => 'required|date_format:H:i|after:start_time',
+                'language' => 'required|string|max:100',
+                'sign_language_support' => 'boolean',
+                'broadcast_link' => 'nullable|url|max:500',
+                'description' => 'nullable|string',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'notes' => 'nullable|string',
+            ]);
+        } else {
+            // These fields are required for regular programs
+            $rules = array_merge($rules, [
+                'section_id' => 'required|exists:sections,id',
+                'major_id' => 'required|exists:majors,id',
+                'book_id' => 'required|exists:books,id',
+                'level_id' => 'required|exists:levels,id',
+                'teacher_id' => 'required|exists:teachers,id',
+                'location_id' => 'required|exists:buildings,id',
+                'weekdays' => 'required|array|min:1',
+                'weekdays.*' => 'string|in:sunday,monday,tuesday,wednesday,thursday,friday,saturday',
+                'lesson' => 'required|string|max:255',
+                'start_time' => 'required|date_format:H:i',
+                'end_time' => 'required|date_format:H:i|after:start_time',
+                'language' => 'required|string|max:100',
+                'sign_language_support' => 'boolean',
+                'broadcast_link' => 'nullable|url|max:500',
+                'description' => 'nullable|string',
+
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
                 'notes' => 'nullable|string',
             ]);
         }
@@ -543,7 +586,6 @@ class StructuredProgramController extends Controller
             'level_id.required' => 'المستوى مطلوب',
             'teacher_id.required' => 'المعلم مطلوب',
             'location_id.required' => 'الموقع مطلوب',
-            'period.required' => 'الفترة مطلوبة',
             'weekdays.required' => 'أيام الأسبوع مطلوبة',
             'weekdays.min' => 'يجب اختيار يوم واحد على الأقل',
             'lesson.required' => 'الدرس مطلوب',

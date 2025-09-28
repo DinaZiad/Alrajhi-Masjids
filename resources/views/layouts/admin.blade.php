@@ -360,7 +360,7 @@
 </head>
 <body>
 <div class="admin-layout">
-    <aside class="sider sider-collapsed" id="sider">
+    <aside class="sider" id="sider">
         <div class="sider-header">
             @php
                 $iconPath = \App\Models\Setting::get('sidebar_icon_path');
@@ -558,10 +558,31 @@
     document.addEventListener('DOMContentLoaded', function() {
         const sider = document.getElementById('sider');
         const toggle = document.getElementById('siderToggle');
+        
+        // Check localStorage for saved sidebar state
+        const savedState = localStorage.getItem('sidebarCollapsed');
+        const isCollapsed = savedState === 'true';
+        
+        // Apply saved state or default to expanded
+        if (isCollapsed) {
+            sider.classList.add('sider-collapsed');
+            document.querySelector('.sider-collapsed-links').style.display = 'flex';
+            document.querySelector('.sider-expanded-links').style.display = 'none';
+        } else {
+            sider.classList.remove('sider-collapsed');
+            document.querySelector('.sider-collapsed-links').style.display = 'none';
+            document.querySelector('.sider-expanded-links').style.display = 'block';
+        }
+        
         toggle.addEventListener('click', function() {
             sider.classList.toggle('sider-collapsed');
+            const isNowCollapsed = sider.classList.contains('sider-collapsed');
+            
+            // Save state to localStorage
+            localStorage.setItem('sidebarCollapsed', isNowCollapsed.toString());
+            
             // Toggle expanded/collapsed links
-            if (sider.classList.contains('sider-collapsed')) {
+            if (isNowCollapsed) {
                 document.querySelector('.sider-collapsed-links').style.display = 'flex';
                 document.querySelector('.sider-expanded-links').style.display = 'none';
             } else {

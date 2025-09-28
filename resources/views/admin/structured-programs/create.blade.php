@@ -15,21 +15,21 @@
         <h2 class="programs-title" style="font-weight:900;color:#174032;font-size:1.5rem;letter-spacing:0.5px;font-family:'Cairo',sans-serif;text-align:center;margin-bottom:2rem;">إضافة برنامج جديد</h2>
         <form action="{{ route('admin.structured-programs.store') }}" method="POST" id="structuredProgramForm">
             @csrf
+            
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
                         
                         <!-- Basic Information Section -->
                         <div class="form-section mb-5">
                             <h5 class="section-title mb-4" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;border-bottom:2px solid #d4af37;padding-bottom:8px;">المعلومات الأساسية</h5>
                             <div class="row g-4">
-                                <div class="col-lg-6 col-md-12">
-                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">عنوان البرنامج <span style="color:#e74c3c">*</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-book input-inside-icon"></i>
-                                        <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}" required style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;">
-                                    </div>
-                                    @error('title')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
                                 <div class="col-lg-3 col-md-6">
                                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">المسجد <span style="color:#e74c3c">*</span></label>
                                     <div class="input-icon-wrapper">
@@ -49,7 +49,7 @@
                                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">نوع البرنامج</label>
                                     <div class="input-icon-wrapper">
                                         <i class="fas fa-tags input-inside-icon"></i>
-                                        <select name="program_type_id" class="form-select @error('program_type_id') is-invalid @enderror" style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;">
+                                        <select name="program_type_id" id="program_type_id" class="form-select @error('program_type_id') is-invalid @enderror" style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;" onchange="toggleProgramTypeFields()">
                                             <option value="">اختر نوع البرنامج</option>
                                             @foreach($programTypes as $programType)
                                                 <option value="{{ $programType->id }}" {{ old('program_type_id') == $programType->id ? 'selected' : '' }}>{{ $programType->name }}</option>
@@ -61,17 +61,27 @@
                                     @enderror
                                 </div>
                                 <div class="col-lg-3 col-md-6">
-                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">الفترة</label>
+                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">المبنى</label>
                                     <div class="input-icon-wrapper">
-                                        <i class="fas fa-clock input-inside-icon"></i>
-                                        <select name="period" class="form-select @error('period') is-invalid @enderror" style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;" required>
-                                            <option value="">اختر الفترة</option>
-                                            @foreach($periods as $key => $period)
-                                                <option value="{{ $key }}" {{ old('period') == $key ? 'selected' : '' }}>{{ $period }}</option>
-                                            @endforeach
+                                        <i class="fas fa-building input-inside-icon"></i>
+                                        <select name="location_id" id="building_select" class="form-select @error('location_id') is-invalid @enderror" style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;" required>
+                                            <option value="">اختر المبنى</option>
+                                            @foreach($buildings as $building)
+                                        <option value="{{ $building->id }}" data-masjid="{{ $building->masjid_id }}" {{ old('location_id') == $building->id ? 'selected' : '' }}>{{ $building->direction }} - {{ $building->building_number }} - {{ $building->floors_count }} - {{ $building->masjid->name }}</option>
+                                    @endforeach
                                         </select>
                                     </div>
-                                    @error('period')
+                                    @error('location_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-lg-3 col-md-6" id="program_title_field" style="display: none;">
+                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">اسم الحلقة</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fas fa-tag input-inside-icon"></i>
+                                        <input type="text" name="title" id="program_title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}" placeholder="أدخل اسم الحلقة" style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;">
+                                    </div>
+                                    @error('title')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -81,8 +91,9 @@
                         <!-- Academic Content Section -->
                         <div class="form-section mb-5">
                             <h5 class="section-title mb-4" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;border-bottom:2px solid #d4af37;padding-bottom:8px;">المحتوى الأكاديمي</h5>
+                            <!-- First Row: القسم التخصص الكتاب الدرس -->
                             <div class="row g-4">
-                                <div class="col-lg-4 col-md-6">
+                                <div class="col-lg-3 col-md-6">
                                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">القسم</label>
                                     <div class="input-icon-wrapper">
                                         <i class="fas fa-layer-group input-inside-icon"></i>
@@ -97,7 +108,7 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-lg-4 col-md-6">
+                                <div class="col-lg-3 col-md-6">
                                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">التخصص</label>
                                     <div class="input-icon-wrapper">
                                         <i class="fas fa-graduation-cap input-inside-icon"></i>
@@ -112,7 +123,7 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-lg-4 col-md-12">
+                                <div class="col-lg-3 col-md-6">
                                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">الكتاب</label>
                                     <div class="input-icon-wrapper">
                                         <i class="fas fa-book-open input-inside-icon"></i>
@@ -127,15 +138,31 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                            </div>
-                            <div class="row g-4 mt-2">
-                                <div class="col-lg-6 col-md-12">
+                                <div class="col-lg-3 col-md-6">
                                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">الدرس</label>
                                     <div class="input-icon-wrapper">
                                         <i class="fas fa-chalkboard-teacher input-inside-icon"></i>
                                         <input type="text" name="lesson" class="form-control @error('lesson') is-invalid @enderror" value="{{ old('lesson') }}" placeholder="أدخل اسم الدرس" style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;" required>
                                     </div>
                                     @error('lesson')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <!-- Second Row: المحاضر المستوى اللغة دعم لغة الإشارة -->
+                            <div class="row g-4 mt-2">
+                                <div class="col-lg-3 col-md-6">
+                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">المحاضر</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fas fa-user-tie input-inside-icon"></i>
+                                        <select name="teacher_id" id="teacher_select" class="form-select @error('teacher_id') is-invalid @enderror" style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;" required>
+                                            <option value="">اختر المحاضر</option>
+                                            @foreach($teachers as $teacher)
+                                                <option value="{{ $teacher->id }}" data-masjid="{{ $teacher->masjid_id }}" {{ old('teacher_id') == $teacher->id ? 'selected' : '' }}>{{ $teacher->name }} - {{ $teacher->masjid->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @error('teacher_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -167,6 +194,21 @@
                                     </div>
                                     @error('language')
                                         <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">دعم لغة الإشارة</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fas fa-hands input-inside-icon" style="color:#d4af37;"></i>
+                                        <div class="form-check" style="background:white;padding:12px 45px 12px 15px;border-radius:12px;border:2px solid #d4af37;height:48px;display:flex;align-items:center;font-family:'Cairo',sans-serif;">
+                                            <input class="form-check-input" type="checkbox" name="sign_language_support" value="1" id="sign_language_support" {{ old('sign_language_support') ? 'checked' : '' }} style="border:2px solid #d4af37;transform:scale(1.2);margin:0;margin-left:8px;">
+                                            <label class="form-check-label" for="sign_language_support" style="color:#174032;font-family:'Cairo',sans-serif;font-weight:600;margin:0;cursor:pointer;">
+                                                دعم لغة الإشارة
+                                            </label>
+                                        </div>
+                                    </div>
+                                    @error('sign_language_support')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -217,66 +259,26 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="row g-4 mt-2">
-                                <div class="col-lg-6 col-md-12">
-                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">المحاضر</label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-user-tie input-inside-icon"></i>
-                                        <select name="teacher_id" id="teacher_select" class="form-select @error('teacher_id') is-invalid @enderror" style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;" required>
-                                            <option value="">اختر المحاضر</option>
-                                            @foreach($teachers as $teacher)
-                                                <option value="{{ $teacher->id }}" data-masjid="{{ $teacher->masjid_id }}" {{ old('teacher_id') == $teacher->id ? 'selected' : '' }}>{{ $teacher->name }} - {{ $teacher->masjid->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    @error('teacher_id')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-lg-6 col-md-12">
-                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">المبنى</label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-building input-inside-icon"></i>
-                                        <select name="location_id" id="building_select" class="form-select @error('location_id') is-invalid @enderror" style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;" required>
-                                            <option value="">اختر المبنى</option>
-                                            @foreach($buildings as $building)
-                                        <option value="{{ $building->id }}" data-masjid="{{ $building->masjid_id }}" {{ old('location_id') == $building->id ? 'selected' : '' }}>{{ $building->direction }} - {{ $building->building_number }} - {{ $building->floors_count }} - {{ $building->masjid->name }}</option>
-                                    @endforeach
-                                        </select>
-                                    </div>
-                                    @error('location_id')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Program Settings Section -->
                         <div class="form-section mb-5">
                             <h5 class="section-title mb-4" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;border-bottom:2px solid #d4af37;padding-bottom:8px;">إعدادات البرنامج</h5>
                             <div class="row g-4">
-                                <div class="col-lg-4 col-md-6">
-                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">الحالة <span style="color:#e74c3c">*</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-toggle-on input-inside-icon"></i>
-                                        <input type="text" name="status" class="form-control @error('status') is-invalid @enderror" value="لم تبدأ" readonly disabled style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;background-color:#f8f9fa;">
-                                    </div>
-                                    @error('status')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-lg-4 col-md-12">
-                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">أيام الأسبوع</label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-calendar-week input-inside-icon"></i>
-                                        <select name="weekdays[]" class="form-select @error('weekdays') is-invalid @enderror" multiple style="border-radius:12px;border:2px solid #d4af37;font-family:'Cairo',sans-serif;padding:12px 45px 12px 15px;min-height:120px;" required>
-                                            @foreach($weekdays as $key => $day)
-                                                <option value="{{ $key }}" {{ in_array($key, old('weekdays', [])) ? 'selected' : '' }}>{{ $day }}</option>
-                                            @endforeach
-                                        </select>
+                                <div class="col-12">
+                                    <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">أيام الأسبوع <span style="color:#e74c3c">*</span></label>
+                                    <div class="weekdays-checkboxes" style="display:flex;gap:15px;flex-wrap:wrap;align-items:center;background:#f8f9fa;padding:15px;border-radius:12px;border:2px solid #d4af37;">
+                                        @foreach($weekdays as $key => $day)
+                                            <div class="form-check" style="margin:0;min-width:80px;">
+                                                <input class="form-check-input" type="checkbox" name="weekdays[]" value="{{ $key }}" id="weekday_{{ $key }}" {{ in_array($key, old('weekdays', [])) ? 'checked' : '' }} style="border:2px solid #d4af37;transform:scale(1.2);">
+                                                <label class="form-check-label" for="weekday_{{ $key }}" style="color:#174032;font-family:'Cairo',sans-serif;font-weight:600;margin-right:8px;font-size:14px;">
+                                                    {{ $day }}
+                                                </label>
+                                            </div>
+                                        @endforeach
                                     </div>
                                     @error('weekdays')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -316,20 +318,6 @@
                                     </div>
                                     @error('notes')
                                         <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row g-4 mt-2">
-                                <div class="col-12">
-                                    <div class="form-check" style="background:#f8f9fa;padding:15px;border-radius:12px;border:2px solid #d4af37;">
-                                        <input class="form-check-input" type="checkbox" name="sign_language_support" value="1" id="sign_language_support" {{ old('sign_language_support') ? 'checked' : '' }} style="border:2px solid #d4af37;transform:scale(1.2);">
-                                        <label class="form-check-label" for="sign_language_support" style="color:#174032;font-family:'Cairo',sans-serif;font-weight:600;margin-right:10px;">
-                                            <i class="fas fa-hands" style="color:#d4af37;margin-left:8px;"></i>
-                                            دعم لغة الإشارة
-                                        </label>
-                                    </div>
-                                    @error('sign_language_support')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -642,6 +630,58 @@
     .row .col-lg-3, .row .col-lg-4, .row .col-lg-6, .row .col-md-6, .row .col-md-12, .row .col-12 {
         padding: 0 10px;
     }
+    .weekdays-checkboxes {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 12px;
+        border: 2px solid #d4af37;
+    }
+    .weekdays-checkboxes .form-check {
+        margin: 0;
+        min-width: 80px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .weekdays-checkboxes .form-check-input {
+        border: 2px solid #d4af37;
+        transform: scale(1.2);
+        margin: 0;
+    }
+    .weekdays-checkboxes .form-check-input:checked {
+        background-color: #d4af37;
+        border-color: #d4af37;
+    }
+    .weekdays-checkboxes .form-check-label {
+        color: #174032;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        margin: 0;
+        cursor: pointer;
+    }
+    
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.375rem;
+    }
+    
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+    
+    .alert ul {
+        margin: 0;
+        padding-right: 1rem;
+    }
     @media (max-width: 768px) {
         .programs-table-card {
             padding: 25px 20px;
@@ -654,6 +694,28 @@
         .row .col-lg-3, .row .col-lg-4, .row .col-lg-6, .row .col-md-6, .row .col-md-12, .row .col-12 {
             padding: 0 5px;
             margin-bottom: 15px;
+        }
+        .weekdays-checkboxes {
+            gap: 10px;
+            padding: 12px;
+        }
+        .weekdays-checkboxes .form-check {
+            min-width: 70px;
+        }
+        .weekdays-checkboxes .form-check-label {
+            font-size: 13px;
+        }
+    }
+    @media (max-width: 480px) {
+        .weekdays-checkboxes {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .weekdays-checkboxes .form-check {
+            min-width: auto;
+            width: 100%;
+            justify-content: flex-start;
         }
     }
 </style>
@@ -734,64 +796,78 @@ function loadBuildingsByMasjid(masjidId) {
     });
 }
 
-function togglePrayerFields() {
+function toggleProgramTypeFields() {
     const programTypeSelect = document.querySelector('select[name="program_type_id"]');
     const prayerFieldsSection = document.getElementById('prayer-fields-section');
+    const programTitleField = document.getElementById('program_title_field');
+    const programTitleInput = document.getElementById('program_title');
     
-    if (programTypeSelect && prayerFieldsSection) {
+    if (programTypeSelect) {
         const selectedOption = programTypeSelect.options[programTypeSelect.selectedIndex];
         const programTypeName = selectedOption ? selectedOption.text : '';
         
-        // Show prayer fields if 'إمامة' is selected
+        // Handle different program types
         if (programTypeName === 'إمامة') {
-            prayerFieldsSection.style.display = 'block';
+            // Show prayer fields and hide other sections
+            if (prayerFieldsSection) prayerFieldsSection.style.display = 'block';
+            if (programTitleField) programTitleField.style.display = 'none';
             hideNonEssentialFields(true);
+        } else if (programTypeName === 'حلقة تحفيظ') {
+            // Show program title field and hide academic fields
+            if (prayerFieldsSection) prayerFieldsSection.style.display = 'none';
+            if (programTitleField) programTitleField.style.display = 'block';
+            if (programTitleInput) {
+                programTitleInput.setAttribute('required', 'required');
+                programTitleInput.placeholder = 'أدخل اسم الحلقة';
+            }
+            hideHalaqatFields(true);
         } else {
-            prayerFieldsSection.style.display = 'none';
+            // Default behavior for other program types
+            if (prayerFieldsSection) prayerFieldsSection.style.display = 'none';
+            if (programTitleField) programTitleField.style.display = 'none';
             hideNonEssentialFields(false);
+            hideHalaqatFields(false);
         }
     }
 }
 
-function hideNonEssentialFields(isImama) {
-    // Hide title and period fields
-    const titleField = document.querySelector('input[name="title"]');
-    if (titleField) {
-        const titleGroup = titleField.closest('.col-lg-6, .col-md-12');
-        if (titleGroup) {
-            titleGroup.style.display = isImama ? 'none' : 'block';
-        }
-        // Handle required attribute for title
-        if (isImama) {
-            if (titleField.hasAttribute('required')) {
-                titleField.setAttribute('data-was-required', 'true');
-            }
-            titleField.removeAttribute('required');
-        } else {
-            if (titleField.getAttribute('data-was-required') === 'true') {
-                titleField.setAttribute('required', 'required');
-            }
-        }
-    }
+function togglePrayerFields() {
+    toggleProgramTypeFields();
+}
+
+function hideHalaqatFields(isHalaqat) {
+    // Fields to hide for حلقات تحفيظ (only specific fields, not the whole section)
+    const halaqatFieldsToHide = [
+        'select[name="section_id"]',
+        'select[name="major_id"]',
+        'select[name="book_id"]',
+        'input[name="lesson"]'
+    ];
     
-    const periodField = document.querySelector('select[name="period"]');
-    if (periodField) {
-        const periodGroup = periodField.closest('.col-lg-3, .col-md-6');
-        if (periodGroup) {
-            periodGroup.style.display = isImama ? 'none' : 'block';
-        }
-        // Handle required attribute for period
-        if (isImama) {
-            if (periodField.hasAttribute('required')) {
-                periodField.setAttribute('data-was-required', 'true');
+    halaqatFieldsToHide.forEach(selector => {
+        const field = document.querySelector(selector);
+        if (field) {
+            const formGroup = field.closest('.col-lg-3, .col-lg-4, .col-lg-6, .col-md-6, .col-md-12, .col-12');
+            if (formGroup) {
+                formGroup.style.display = isHalaqat ? 'none' : 'block';
             }
-            periodField.removeAttribute('required');
-        } else {
-            if (periodField.getAttribute('data-was-required') === 'true') {
-                periodField.setAttribute('required', 'required');
+            
+            // Handle required attribute
+            if (isHalaqat) {
+                if (field.hasAttribute('required')) {
+                    field.setAttribute('data-was-required-halaqat', 'true');
+                }
+                field.removeAttribute('required');
+            } else {
+                if (field.getAttribute('data-was-required-halaqat') === 'true') {
+                    field.setAttribute('required', 'required');
+                }
             }
         }
-    }
+    });
+}
+
+function hideNonEssentialFields(isImama) {
     
     // Hide entire sections with their headers
     const sectionsToHide = [
@@ -938,9 +1014,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listener for program type change
     const programTypeSelect = document.querySelector('select[name="program_type_id"]');
     if (programTypeSelect) {
-        programTypeSelect.addEventListener('change', togglePrayerFields);
+        programTypeSelect.addEventListener('change', toggleProgramTypeFields);
         // Check initial state
-        togglePrayerFields();
+        toggleProgramTypeFields();
     }
 });
 </script>

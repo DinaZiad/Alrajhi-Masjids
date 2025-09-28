@@ -98,11 +98,12 @@ class MasjidController extends Controller
         
         // Determine which programs to query
         if ($showAll) {
-            // Query programs from all masjids
-            $query = \App\Models\StructuredProgram::with(['masjid', 'programType', 'section', 'major', 'location', 'teacher'])->latest();
+            // Query programs from Al-Haram and Al-Nabawi masjids only
+            $query = \App\Models\StructuredProgram::with(['masjid', 'programType', 'section', 'major', 'location', 'teacher', 'book', 'level'])
+                ->whereIn('masjid_id', [1, 2])->latest();
         } else {
             // Query programs from specific masjid
-            $query = \App\Models\StructuredProgram::with(['masjid', 'programType', 'section', 'major', 'location', 'teacher'])
+            $query = \App\Models\StructuredProgram::with(['masjid', 'programType', 'section', 'major', 'location', 'teacher', 'book', 'level'])
                 ->where('masjid_id', $masjid->id)
                 ->latest();
         }
@@ -163,113 +164,19 @@ class MasjidController extends Controller
         $programs = $query->latest()->get();
         return view('masjids.partials.table_scientific_rows', compact('programs'))->render();
     }
+    
     public function filterHalaqat(Request $request, Masjid $masjid)
     {
         $query = $masjid->programs()->where('program_type', 'حلقة تحفيظ');
         if ($request->filled('instructor')) $query->where('instructor', 'like', '%'.$request->instructor.'%');
+        if ($request->filled('level')) $query->where('level', $request->level);
         if ($request->filled('group')) $query->where('group', $request->group);
         if ($request->filled('status')) $query->where('status', $request->status);
         if ($request->filled('date')) $query->whereDate('date', $request->date);
         $programs = $query->latest()->get();
         return view('masjids.partials.table_halaqat_rows', compact('programs'))->render();
     }
-    public function filterImama(Request $request, Masjid $masjid)
-    {
-        $query = $masjid->programs()->where('program_type', 'إمامة');
-        if ($request->filled('imam')) {
-            $imam = $request->imam;
-            $query->where(function($q) use ($imam) {
-                $q->where('imam_fajr', 'like', "%$imam%")
-                  ->orWhere('imam_dhuhr', 'like', "%$imam%")
-                  ->orWhere('imam_asr', 'like', "%$imam%")
-                  ->orWhere('imam_maghrib', 'like', "%$imam%")
-                  ->orWhere('imam_isha', 'like', "%$imam%") ;
-            });
-        }
-        if ($request->filled('prayer')) {
-            $prayer = $request->prayer;
-            $imamField = null;
-            if ($prayer === 'fajr') $imamField = 'imam_fajr';
-            if ($prayer === 'dhuhr') $imamField = 'imam_dhuhr';
-            if ($prayer === 'asr') $imamField = 'imam_asr';
-            if ($prayer === 'maghrib') $imamField = 'imam_maghrib';
-            if ($prayer === 'isha') $imamField = 'imam_isha';
-            if ($imamField) $query->whereNotNull($imamField)->where($imamField, '!=', '');
-        }
-        if ($request->filled('day')) $query->where('day', $request->day);
-        if ($request->filled('date')) $query->whereDate('date', $request->date);
-        $programs = $query->latest()->get();
-        return view('masjids.partials.table_imama_rows', compact('programs'))->render();
-    }
 
-    public function filterAll(Request $request, Masjid $masjid)
-    {
-        $query = $masjid->programs();
-        
-        // Search across all fields
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('book', 'like', '%'.$search.'%')
-                  ->orWhere('field', 'like', '%'.$search.'%')
-                  ->orWhere('specialty', 'like', '%'.$search.'%')
-                  ->orWhere('teacher', 'like', '%'.$search.'%')
-                  ->orWhere('instructor', 'like', '%'.$search.'%')
-                  ->orWhere('imam_name', 'like', '%'.$search.'%')
-                  ->orWhere('status', 'like', '%'.$search.'%')
-                  ->orWhere('program_type', 'like', '%'.$search.'%');
-            });
-        }
-        
-        if ($request->filled('date')) {
-            $query->whereDate('date', $request->date);
-        }
-        
-        $programs = $query->latest()->get();
-        return view('masjids.partials.table_all_rows', compact('programs'))->render();
-    }
-
-    // Add edit method
-    public function edit(Masjid $masjid)
-    {
-        return view('masjids.edit', compact('masjid'));
-    }
-
-    // Add update method
-    public function update(Request $request, Masjid $masjid)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'total_area' => 'nullable|string|max:255',
-            'covered_area_sqm' => 'nullable|numeric',
-            'capacity' => 'nullable|integer',
-            'gate_count' => 'nullable|integer',
-            'wing_count' => 'nullable|integer',
-            'prayer_hall_count' => 'nullable|integer',
-            'tawaf_per_hour' => 'nullable|integer',
-            'general_info' => 'nullable|string',
-            'available_services' => 'nullable|string',
-            'general_statistics' => 'nullable|string',
-            'programs_count' => 'nullable|array',
-            'current_datetime' => 'nullable|date',
-        ]);
-        $masjid->update($validated);
-        return redirect()->route('masjids.index')->with('success', 'تم تحديث المسجد بنجاح');
-    }
-
-    // Add destroy method
-    public function destroy(Masjid $masjid)
-    {
-        // Prevent deleting the first two masjids (by id ascending)
-        $firstTwoIds = Masjid::orderBy('id')->limit(2)->pluck('id')->toArray();
-        if (in_array($masjid->id, $firstTwoIds)) {
-            return redirect()->route('masjids.index')->with('error', 'لا يمكن حذف المسجدين الأولين.');
-        }
-        $masjid->delete();
-        return redirect()->route('masjids.index')->with('success', 'تم حذف المسجد بنجاح');
-    }
-
-    // API method for fetching announcements
     public function getAnnouncementsApi(Masjid $masjid)
     {
         $announcements = $masjid->announcements()->latest()->get();
@@ -302,9 +209,10 @@ class MasjidController extends Controller
         
         // Determine which programs to query
         if ($showAll) {
-            $query = \App\Models\StructuredProgram::with(['masjid', 'programType', 'section', 'major', 'location', 'teacher'])->latest();
+            $query = \App\Models\StructuredProgram::with(['masjid', 'programType', 'section', 'major', 'location', 'teacher', 'book', 'level'])
+                ->whereIn('masjid_id', [1, 2])->latest();
         } else {
-            $query = \App\Models\StructuredProgram::with(['masjid', 'programType', 'section', 'major', 'location', 'teacher'])
+            $query = \App\Models\StructuredProgram::with(['masjid', 'programType', 'section', 'major', 'location', 'teacher', 'book', 'level'])
                 ->where('masjid_id', $masjid->id)
                 ->latest();
         }

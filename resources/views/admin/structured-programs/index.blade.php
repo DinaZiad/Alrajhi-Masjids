@@ -100,13 +100,7 @@
                     <thead class="table-head">
                          <tr>
                              <th>#</th>
-                             <th>المسجد</th>
                              <th>نوع البرنامج</th>
-                             <th>البرنامج/التاريخ</th>
-                             <th>القسم</th>
-                             <th>التخصص</th>
-                             <th>المحاضر</th>
-                             <th>التوقيت</th>
                              <th>الحالة</th>
                              <th>الملاحظات</th>
                              <th class="actions-col">إجراءات</th>
@@ -116,49 +110,8 @@
                         @foreach($programs as $index => $program)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $program->masjid->name ?? 'غير محدد' }}</td>
-                                <td>
-                                     {{ $program->programType->name ?? 'غير محدد' }}
-                                 </td>
-                                <td>
-                                    @if($program->programType && $program->programType->name === 'إمامة')
-                                        {{ $program->date ? $program->date->format('Y-m-d') : '-' }}
-                                    @else
-                                        {{ $program->title ?? '-' }}
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($program->programType && $program->programType->name === 'إمامة')
-                                        <span class="text-muted">-</span>
-                                    @else
-                                        {{ $program->section->name ?? 'غير محدد' }}
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($program->programType && $program->programType->name === 'إمامة')
-                                        <span class="text-muted">-</span>
-                                    @else
-                                        {{ $program->major->name ?? 'غير محدد' }}
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($program->programType && $program->programType->name === 'إمامة')
-                                        <span class="text-muted">-</span>
-                                    @else
-                                        {{ $program->teacher->name ?? 'غير محدد' }}
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                      @if($program->programType && $program->programType->name === 'إمامة')
-                                          <span class="text-muted">-</span>
-                                      @else
-                                          @if($program->start_time && $program->end_time)
-                                              {{ $program->start_time->format('g:i A') }} - {{ $program->end_time->format('g:i A') }}
-                                          @else
-                                              -
-                                          @endif
-                                      @endif
-                                  </td>
+                                <td>{{ $program->programType->name ?? 'غير محدد' }}</td>
+                              
                                 <td class="editable-cell" data-field="status" data-id="{{ $program->id }}">
                                  <span class="display-value">{{ $program->status ?? 'غير محدد' }}</span>
                                  <input type="text" class="edit-input form-control" style="display: none;" value="{{ $program->status }}">

@@ -54,7 +54,7 @@ function dash($val) {
         .dashboard-header {
             background: #ffffff;
             color: #174032;
-            padding: 0.5vw 2vw;
+            padding: 0.3vw 2vw;
             font-family: 'Cairo', sans-serif;
             position: relative;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -62,7 +62,7 @@ function dash($val) {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            min-height: 2.5vw;
+            min-height: 2vw;
         }
         .navbar-left {
             display: flex;
@@ -70,9 +70,35 @@ function dash($val) {
             gap: 1.5vw;
         }
         
+        .back-button-container {
+            position: absolute;
+            left: 1vw;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .back-button {
+            background: white;
+            color: #174032;
+            border: 2px solid #174032;
+            padding: 0.5vw 1vw;
+            border-radius: 8px;
+            font-size: 0.8vw;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5vw;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #f8f9fa;
+            transform: translateX(-2px);
+        }
+        
         .navbar-logo {
             width: auto;
-            height: 4.9vw;
+            height: 3.5vw;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -94,29 +120,27 @@ function dash($val) {
         
         .site-name {
             color: #174032;
-            font-size: 1.1vw;
-            font-weight: 700;
+            font-size: 1.2vw;
+            font-weight: 600;
             line-height: 1.2;
         }
         
         .masjid-name {
             color: #174032;
-            font-size: 1.4vw;
+            font-size: 1.3vw;
             font-weight: 900;
             line-height: 1.2;
+            text-align: center;
         }
         
-        .navbar-date {
-            font-size: 1.2vw;
-            font-weight: 600;
-            text-align: center;
-            color: #ffffff;
-            white-space: nowrap;
-            background-color: #174032;
-            padding: 0.5vw 1vw;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .navbar-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
         }
+        
         .info-bar {
             display: flex;
             flex-direction: row;
@@ -143,12 +167,12 @@ function dash($val) {
         }
         .info-label {
             color: var(--charcoal-dark);
-            font-size: 0.4vw;
+            font-size: 0.6vw;
             font-weight: 700;
         }
         .info-value {
             color: var(--deep-forest);
-            font-size: 0.6vw;
+            font-size: 0.8vw;
             font-weight: 900;
         }
         .marquee-container {
@@ -170,7 +194,7 @@ function dash($val) {
         .marquee {
             white-space: nowrap;
             overflow: hidden;
-            font-size: 0.9vw;
+            font-size: 0.8vw;
             font-weight: 600;
             color: var(--deep-forest);
             display: inline-block;
@@ -322,7 +346,7 @@ function dash($val) {
         }
         .table-section h4 {
             color: var(--deep-forest);
-            font-size: 1vw;
+            font-size: 0.9vw;
             font-weight: bold;
             margin-bottom: 0.2vw;
             margin-top: 0.1vw;
@@ -338,7 +362,7 @@ function dash($val) {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            font-size: 0.85vw;
+            font-size: 0.75vw;
             background: var(--pure-white);
             border-radius: var(--border-radius);
             overflow: hidden;
@@ -347,6 +371,27 @@ function dash($val) {
             border: 1px solid var(--border-subtle);
             padding: 0.15vw 0.2vw;
             text-align: center;
+        }
+        
+        /* Column width consistency */
+        th:nth-child(6), td:nth-child(6) { /* من column */
+            width: 8%;
+            min-width: 8%;
+        }
+        
+        th:nth-child(7), td:nth-child(7) { /* إلى column */
+            width: 8%;
+            min-width: 8%;
+        }
+        
+        th:nth-child(1), td:nth-child(1) { /* الكتاب column */
+            width: 12%;
+            min-width: 12%;
+        }
+        
+        th:nth-child(4), td:nth-child(4) { /* المستوى column */
+            width: 10%;
+            min-width: 10%;
         }
         th {
             background: var(--primary-gradient);
@@ -411,7 +456,9 @@ function dash($val) {
         
         @media (max-width: 1200px) {
             .dashboard-header { font-size: 1rem; }
-            .masjid-name { font-size: 0.9rem; }
+            .site-name { font-size: 1.2rem; }
+            .masjid-name { font-size: 1.1rem; }
+            .back-button { font-size: 0.7rem; padding: 0.4rem 0.8rem; }
             .info-label, .info-value, .marquee, .table-section h4 { font-size: 0.8rem; }
             .imama-table { font-size: 0.6vw !important; }
             .imama-table th, .imama-table td { font-size: 0.6vw !important; padding: 0.08vw 0.12vw !important; }
@@ -491,6 +538,13 @@ function dash($val) {
 
 <div style="color:blue"></div>
     <div class="dashboard-header">
+        <div class="back-button-container">
+            <button class="back-button" onclick="window.history.back()">
+                <i class="fas fa-arrow-right"></i>
+                <span>رجوع</span>
+            </button>
+        </div>
+        
         <div class="navbar-left">
             @if($iconUrl)
                 <div class="navbar-logo">
@@ -499,8 +553,11 @@ function dash($val) {
             @endif
             <div class="navbar-titles">
                 <div class="site-name">{{ $siteName }}</div>
-                <div class="masjid-name">{{ $masjid->name }}</div>
             </div>
+        </div>
+        
+        <div class="navbar-center">
+            <div class="masjid-name">{{ $masjid->name }}</div>
         </div>
         
         @php
@@ -564,16 +621,13 @@ function dash($val) {
                 $hijriMonthName = $arabicMonths[$hijriMonth];
                 $hijriYearNum = $hijriYear->year;
             } else {
-                // Fallback if no Hijri year found
+                // Fallback if no Hijri year found - set to current month (Rabi' al-Thani)
                 $hijriDay = 15;
-                $hijriMonthName = 'ربيع الأول';
-                $hijriYearNum = 1447;
+                $hijriMonthName = 'ربيع الآخر';
+                $hijriYearNum = 1446;
             }
         @endphp
         
-        <div class="navbar-date">
-            {{ $dayName }} {{ $hijriDay }} {{ $hijriMonthName }} {{ $hijriYearNum }}هـ - {{ $gregorianDay }} {{ $gregorianMonth }} {{ $gregorianYear }}م
-        </div>
        
     </div>
     <div class="info-bar">
@@ -593,15 +647,6 @@ function dash($val) {
         <div class="info-item"><div class="info-label">احصائيات عامة عن الحرم المكي</div><div class="info-value">{{ dash($masjid->general_statistics) }}</div></div>
     </div>
     
-    <div class="info-bar">
-        @php
-            $programsCount = $masjid->programs_count ?: [];
-        @endphp
-        <div class="info-item"><div class="info-label">البرامج</div><div class="info-value">{{ dash($programsCount['programs'] ?? null) }}</div></div>
-        <div class="info-item"><div class="info-label">الدروس</div><div class="info-value">{{ dash($programsCount['lessons'] ?? null) }}</div></div>
-        <div class="info-item"><div class="info-label">حلقات تحفيظ القران الكريم</div><div class="info-value">{{ dash($programsCount['circles'] ?? null) }}</div></div>
-        <div class="info-item"><div class="info-label">الوقت</div><div class="info-value" id="current-time"></div></div>
-    </div>
     <div class="marquee-container">
         <div class="marquee-wrapper">
             <div id="marquee-js" class="marquee"></div>
@@ -1023,15 +1068,41 @@ function dash($val) {
                 return 'بدأت';
             }
             
+            // If program hasn't started yet, show "في الموعد" instead of "لم تبدأ"
+            if (program.status === 'لم تبدأ') {
+                return 'في الموعد';
+            }
+            
             // If program hasn't started yet, return original status
             return program.status || 'غير محدد';
         }
         
         // Helper function to build regular programs table
         function buildRegularProgramsTable(programs) {
+            // Check if this is حلقة تحفيظ programs
+            const isHalaqat = programs.length > 0 && programs[0].program_type && 
+                             (programs[0].program_type.name === 'حلقة تحفيظ' || programs[0].program_type === 'حلقة تحفيظ');
+            
             let html = `
                 <thead>
                     <tr>
+            `;
+            
+            if (isHalaqat) {
+                html += `
+                        <th>اسم الحلقة</th>
+                        <th>المستوى</th>
+                        <th>الحالة</th>
+                        <th>من</th>
+                        <th>إلى</th>
+                        <th>اللغة</th>
+                        <th>ملاحظات</th>
+                        <th>الموقع</th>
+                        <th>المحاضر</th>
+                        <th>رابط البث</th>
+                `;
+            } else {
+                html += `
                         <th>الكتاب</th>
                         <th>القسم</th>
                         <th>التخصص</th>
@@ -1039,12 +1110,15 @@ function dash($val) {
                         <th>الحالة</th>
                         <th>من</th>
                         <th>إلى</th>
-                        <th>الفترة</th>
                         <th>اللغة</th>
                         <th>ملاحظات</th>
                         <th>الموقع</th>
                         <th>المحاضر</th>
                         <th>رابط البث</th>
+                `;
+            }
+            
+            html += `
                     </tr>
                 </thead>
                 <tbody>
@@ -1054,23 +1128,40 @@ function dash($val) {
                 if (shouldShowProgram(program)) {
                     const visibilityClass = getProgramVisibilityClass(program);
                     const dynamicStatus = getDynamicProgramStatus(program);
-                    html += `
-                        <tr class="${visibilityClass}">
-                            <td>${program.book ? program.book.name : '-'}</td>
-                            <td>${program.section ? program.section.name : '-'}</td>
-                            <td>${program.major ? program.major.name : '-'}</td>
-                            <td>${program.level ? program.level.name : '-'}</td>
-                            <td><span class="status-badge status-${dynamicStatus}">${dynamicStatus}</span></td>
-                            <td>${formatTime12Hour(program.start_time)}</td>
-                            <td>${formatTime12Hour(program.end_time)}</td>
-                            <td>${program.period || '-'}</td>
-                            <td>${program.language || '-'}</td>
-                            <td>${program.notes || '-'}</td>
-                            <td>${program.location ? program.location.building_number : '-'}</td>
-                            <td>${program.teacher ? program.teacher.name : '-'}</td>
-                            <td>${program.broadcast_link ? `<a href="${program.broadcast_link}" target="_blank">رابط البث</a>` : '-'}</td>
-                        </tr>
-                    `;
+                    
+                    if (isHalaqat) {
+                        html += `
+                            <tr class="${visibilityClass}">
+                                <td>${program.title || '-'}</td>
+                                <td>${program.level ? program.level.name : '-'}</td>
+                                <td><span class="status-badge status-${dynamicStatus}">${dynamicStatus}</span></td>
+                                <td>${formatTime12Hour(program.start_time)}</td>
+                                <td>${formatTime12Hour(program.end_time)}</td>
+                                <td>${program.language || '-'}</td>
+                                <td>${program.notes || '-'}</td>
+                                <td>${program.location ? program.location.building_number : '-'}</td>
+                                <td>${program.teacher ? program.teacher.name : '-'}</td>
+                                <td>${program.broadcast_link ? `<a href="${program.broadcast_link}" target="_blank">رابط البث</a>` : '-'}</td>
+                            </tr>
+                        `;
+                    } else {
+                        html += `
+                            <tr class="${visibilityClass}">
+                                <td>${program.book ? program.book.title : '-'}</td>
+                                <td>${program.section ? program.section.name : '-'}</td>
+                                <td>${program.major ? program.major.name : '-'}</td>
+                                <td>${program.level ? program.level.name : '-'}</td>
+                                <td><span class="status-badge status-${dynamicStatus}">${dynamicStatus}</span></td>
+                                <td>${formatTime12Hour(program.start_time)}</td>
+                                <td>${formatTime12Hour(program.end_time)}</td>
+                                <td>${program.language || '-'}</td>
+                                <td>${program.notes || '-'}</td>
+                                <td>${program.location ? program.location.building_number : '-'}</td>
+                                <td>${program.teacher ? program.teacher.name : '-'}</td>
+                                <td>${program.broadcast_link ? `<a href="${program.broadcast_link}" target="_blank">رابط البث</a>` : '-'}</td>
+                            </tr>
+                        `;
+                    }
                 }
             });
             
@@ -1104,21 +1195,6 @@ function dash($val) {
         setInterval(updatePrograms, 15000); // Every 15 seconds
         setInterval(updateTimeBasedVisibility, 30000); // Every 30 seconds for time-based visibility
         
-        // Dynamic Time Update
-                function updateCurrentTime() {
-                    const now = new Date();
-                    let hours = now.getHours();
-                    const minutes = String(now.getMinutes()).padStart(2, '0');
-                    const seconds = String(now.getSeconds()).padStart(2, '0');
-                    const ampm = hours >= 12 ? 'م' : 'ص';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12; // the hour '0' should be '12'
-                    hours = String(hours).padStart(2, '0');
-                    document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
-                }
-
-        updateCurrentTime(); // Initial call
-        setInterval(updateCurrentTime, 1000); // Update every second
 
         // Initial update after 2 seconds to allow page to load
         setTimeout(() => {
@@ -1174,26 +1250,41 @@ function dash($val) {
                         </table>
                     @else
                         <!-- Regular Programs Table -->
+                        @php
+                            $isHalaqat = $programTypeName === 'حلقة تحفيظ';
+                        @endphp
                         <table>
                             <thead>
                                 <tr>
-                                    <th>الكتاب</th>
-                                    <th>القسم</th>
-                                    <th>التخصص</th>
-                                    <th>المستوى</th>
-                                    <th>الحالة</th>
-                                    <th>من</th>
-                                    <th>إلى</th>
-                                    <th>الفترة</th>
-                                    <th>اللغة</th>
-                                    <th>ملاحظات</th>
-                                    <th>الموقع</th>
-                                    <th>المحاضر</th>
-                                    <th>رابط البث</th>
+                                    @if($isHalaqat)
+                                        <th>اسم الحلقة</th>
+                                        <th>المستوى</th>
+                                        <th>الحالة</th>
+                                        <th>من</th>
+                                        <th>إلى</th>
+                                        <th>اللغة</th>
+                                        <th>ملاحظات</th>
+                                        <th>الموقع</th>
+                                        <th>المحاضر</th>
+                                        <th>رابط البث</th>
+                                    @else
+                                        <th>الكتاب</th>
+                                        <th>القسم</th>
+                                        <th>التخصص</th>
+                                        <th>المستوى</th>
+                                        <th>الحالة</th>
+                                        <th>من</th>
+                                        <th>إلى</th>
+                                        <th>اللغة</th>
+                                        <th>ملاحظات</th>
+                                        <th>الموقع</th>
+                                        <th>المحاضر</th>
+                                        <th>رابط البث</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
-                                @include('masjids.partials.table_structured_programs_rows', ['programs' => $programs])
+                                @include('masjids.partials.table_structured_programs_rows', ['programs' => $programs, 'isHalaqat' => $isHalaqat])
                             </tbody>
                         </table>
                     @endif

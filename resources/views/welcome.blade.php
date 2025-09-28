@@ -483,27 +483,12 @@
             <p>يرجى اختيار المسجد الذي ترغب في عرض فعالياته.</p>
             <div class="masjid-btns" id="masjidBtns">
                 @foreach($masjidCards as $i => $masjid)
-                    <div class="masjid-card {{ $masjid['id'] === 'all' ? 'dropdown-container' : '' }}">
-                        <button class="masjid-btn" data-masjid-id="{{ $masjid['id'] }}" onclick="{{ $masjid['id'] === 'all' ? 'toggleDropdown()' : 'toggleFilters(' . $masjid['id'] . ')' }}" tabindex="0" style="width:100%; display:block; text-align:center;">
+                    <div class="masjid-card">
+                        <button class="masjid-btn" data-masjid-id="{{ $masjid['id'] }}" onclick="{{ $masjid['id'] === 'all' ? 'showBothMosques()' : 'toggleFilters(' . $masjid['id'] . ')' }}" tabindex="0" style="width:100%; display:block; text-align:center;">
                             <span class="icon">{!! $masjid['icon'] !!}</span>
                             <span>{{ $masjid['name'] }}</span>
-                            @if($masjid['id'] === 'all')
-                                <i class="fas fa-chevron-down dropdown-arrow"></i>
-                            @endif
                         </button>
                         
-                        @if($masjid['id'] === 'all')
-                            <div class="dropdown-menu" id="allMasjidsDropdown">
-                                @foreach($otherMasjids as $otherMasjid)
-                                    <div class="dropdown-item">
-                                        <button class="dropdown-btn" onclick="toggleFilters({{ $otherMasjid->id }}, '{{ $otherMasjid->name }}')" data-masjid-id="{{ $otherMasjid->id }}">
-                                            <i class="fas fa-mosque"></i>
-                                            <span>{{ $otherMasjid->name }}</span>
-                                        </button>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
                         
                         <div class="filter-section" id="filters-{{ $masjid['id'] }}">
                             <div class="filter-header">
@@ -678,49 +663,8 @@
     </footer>
     <script>
         let activeFilters = null;
-        
-        function toggleDropdown() {
-            const dropdown = document.getElementById('allMasjidsDropdown');
-            const container = dropdown.closest('.dropdown-container');
-            
-            // Close all filter sections first
-            document.querySelectorAll('.filter-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Toggle dropdown
-            dropdown.classList.toggle('show');
-            container.classList.toggle('active');
-            
-            // Close dropdown when clicking outside
-            if (dropdown.classList.contains('show')) {
-                document.addEventListener('click', closeDropdownOnOutsideClick);
-            } else {
-                document.removeEventListener('click', closeDropdownOnOutsideClick);
-            }
-        }
-        
-        function closeDropdownOnOutsideClick(event) {
-            const dropdown = document.getElementById('allMasjidsDropdown');
-            const container = dropdown.closest('.dropdown-container');
-            
-            if (!container.contains(event.target)) {
-                dropdown.classList.remove('show');
-                container.classList.remove('active');
-                document.removeEventListener('click', closeDropdownOnOutsideClick);
-            }
-        }
 
         function toggleFilters(masjidId, masjidName) {
-            // Close dropdown if open
-            const dropdown = document.getElementById('allMasjidsDropdown');
-            const dropdownContainer = dropdown?.closest('.dropdown-container');
-            if (dropdown && dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
-                dropdownContainer.classList.remove('active');
-                document.removeEventListener('click', closeDropdownOnOutsideClick);
-            }
-            
             // Close all other filter sections first
             document.querySelectorAll('.filter-section').forEach(section => {
                 if (section.id !== `filters-${masjidId}`) {
@@ -754,6 +698,11 @@
                 activeFilters = null;
                 document.body.classList.remove('menu-open');
             }
+        }
+        
+        function showBothMosques() {
+            // Directly redirect to show both Al-Haram and Al-Nabawi mosques
+            window.location.href = '/masjids/1/display?show_all=true';
         }
         
         function applyFilters(masjidId) {

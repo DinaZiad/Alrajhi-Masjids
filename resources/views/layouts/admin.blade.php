@@ -364,9 +364,7 @@
         <div class="sider-header">
             @php
                 $iconPath = \App\Models\Setting::get('sidebar_icon_path');
-                $iconUrl = $iconPath && Illuminate\Support\Facades\Storage::disk('public')->exists($iconPath)
-                    ? Illuminate\Support\Facades\Storage::disk('public')->url($iconPath)
-                    : null;
+                $iconUrl = $iconPath ? (\Illuminate\Support\Facades\Storage::disk('public')->exists($iconPath) ? \Illuminate\Support\Facades\Storage::url($iconPath) : null) : null;
             @endphp
             <div class="sider-logo{{ !$iconUrl ? ' has-icon' : '' }}">
                 @if($iconUrl)

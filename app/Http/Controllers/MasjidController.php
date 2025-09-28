@@ -93,7 +93,7 @@ class MasjidController extends Controller
         
         // Get settings data for navbar
         $iconPath = \App\Models\Setting::get('sidebar_icon_path');
-        $iconUrl = $iconPath ? (\Illuminate\Support\Facades\Storage::disk('public')->exists($iconPath) ? \Illuminate\Support\Facades\Storage::disk('public')->url($iconPath) : null) : null;
+        $iconUrl = $iconPath ? (\Illuminate\Support\Facades\Storage::disk('public')->exists($iconPath) ? \Illuminate\Support\Facades\Storage::url($iconPath) : null) : null;
         $siteName = \App\Models\Setting::get('site_name') ?: 'الهيئة العامة للعناية بشؤون المسجد الحرام والمسجد النبوي';
         
         // Determine which programs to query

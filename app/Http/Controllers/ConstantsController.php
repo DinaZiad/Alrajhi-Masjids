@@ -20,7 +20,7 @@ class ConstantsController extends Controller
     public function icons()
     {
         $iconPath = Setting::get('sidebar_icon_path');
-        $iconUrl = $iconPath ? (Storage::disk('public')->exists($iconPath) ? Storage::disk('public')->url($iconPath) : null) : null;
+        $iconUrl = $iconPath ? (Storage::disk('public')->exists($iconPath) ? Storage::url($iconPath) : null) : null;
         $siteName = Setting::get('site_name');
         return view('constants.icons', compact('iconUrl', 'siteName'));
     }

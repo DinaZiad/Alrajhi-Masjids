@@ -79,8 +79,8 @@
                 </div>
             </div>
             
-            <!-- الحقول الجديدة -->
-            <div class="row">
+            <!-- الحقول الجديدة - مخفية -->
+            <div class="row" style="display: none;">
                 <div class="col-md-12 mb-3">
                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">معلومات عامة عن المسجد</label>
                     <div class="input-icon-wrapper">
@@ -90,7 +90,7 @@
                 </div>
             </div>
             
-            <div class="row">
+            <div class="row" style="display: none;">
                 <div class="col-md-12 mb-3">
                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">خدمات متاحة في المسجد</label>
                     <div class="input-icon-wrapper">
@@ -100,7 +100,7 @@
                 </div>
             </div>
             
-            <div class="row">
+            <div class="row" style="display: none;">
                 <div class="col-md-12 mb-3">
                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">إحصائيات عامة عن المسجد</label>
                     <div class="input-icon-wrapper">
@@ -110,7 +110,7 @@
                 </div>
             </div>
             
-            <div class="row">
+            <div class="row" style="display: none;">
                 <div class="col-md-6 mb-3">
                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">عدد البرامج</label>
                     <div class="input-icon-wrapper">
@@ -127,7 +127,7 @@
                 </div>
             </div>
             
-            <div class="row">
+            <div class="row" style="display: none;">
                 <div class="col-md-6 mb-3">
                     <label class="form-label" style="color:#174032;font-weight:700;font-family:'Cairo',sans-serif;">عدد الحلقات</label>
                     <div class="input-icon-wrapper">

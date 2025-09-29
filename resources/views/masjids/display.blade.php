@@ -80,10 +80,11 @@ function dash($val) {
         .back-button {
             background: white;
             color: #174032;
-            border: 2px solid #174032;
+            border: none;
             padding: 0.5vw 1vw;
             border-radius: 8px;
             font-size: 0.8vw;
+            font-family: 'Cairo', 'Amiri', serif;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -120,14 +121,14 @@ function dash($val) {
         
         .site-name {
             color: #174032;
-            font-size: 1.2vw;
+            font-size: 0.8vw;
             font-weight: 600;
             line-height: 1.2;
         }
         
         .masjid-name {
             color: #174032;
-            font-size: 1.3vw;
+            font-size: 0.8vw;
             font-weight: 900;
             line-height: 1.2;
             text-align: center;
@@ -144,7 +145,7 @@ function dash($val) {
         .info-bar {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            justify-content: center;
             align-items: stretch;
             gap: 0.05vw;
             margin: 0.1vw auto 0.05vw auto;
@@ -162,6 +163,19 @@ function dash($val) {
             align-items: center;
             justify-content: center;
             font-size: 0.6vw;
+        }
+        .info-item-center {
+            background: var(--pure-white);
+            border-radius: var(--border-radius);
+            box-shadow: 0 1px 4px rgba(23,64,50,0.07);
+            padding: 0.3vw 0.5vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6vw; 
+            width: 100%;
+            gap: 0.1vw;
             border: 1px solid var(--border-subtle);
             margin: 0 0.01vw;
         }
@@ -393,6 +407,12 @@ function dash($val) {
             width: 10%;
             min-width: 10%;
         }
+        
+        /* Location column width for حلقة تحفيظ table (8th column) */
+        th:nth-child(8), td:nth-child(8) { 
+            width: 12%;
+            min-width: 12%;
+        }
         th {
             background: var(--primary-gradient);
             color: var(--warm-gold);
@@ -456,8 +476,8 @@ function dash($val) {
         
         @media (max-width: 1200px) {
             .dashboard-header { font-size: 1rem; }
-            .site-name { font-size: 1.2rem; }
-            .masjid-name { font-size: 1.1rem; }
+            .site-name { font-size: 0.8rem; }
+            .masjid-name { font-size: 0.8rem; }
             .back-button { font-size: 0.7rem; padding: 0.4rem 0.8rem; }
             .info-label, .info-value, .marquee, .table-section h4 { font-size: 0.8rem; }
             .imama-table { font-size: 0.6vw !important; }
@@ -631,7 +651,7 @@ function dash($val) {
        
     </div>
     <div class="info-bar">
-                <div class="info-item"><div class="info-label">المساحة الكلية</div><div class="info-value">{{ dash($masjid->total_area) }}</div></div>
+                <div class="image.png"><div class="info-label">المساحة الكلية</div><div class="info-value">{{ dash($masjid->total_area) }}</div></div>
                 <div class="info-item"><div class="info-label">الطاقة الاستيعابية</div><div class="info-value">{{ dash($masjid->capacity) }}</div></div>
                 <div class="info-item"><div class="info-label">عدد الأبواب</div><div class="info-value">{{ dash($masjid->gate_count) }}</div></div>
                 <div class="info-item"><div class="info-label">عدد الأجنحة</div><div class="info-value">{{ dash($masjid->wing_count) }}</div></div>
@@ -640,11 +660,12 @@ function dash($val) {
 
             </div>
     
-    <!-- Additional Masjid Information -->
+    <!-- Date and Time Information -->
     <div class="info-bar">
-        <div class="info-item"><div class="info-label">معلومات عامة عن الحرم المكي</div><div class="info-value">{{ dash($masjid->general_info) }}</div></div>
-        <div class="info-item"><div class="info-label">خدمات متاحة في الحرم المكي</div><div class="info-value">{{ dash($masjid->available_services) }}</div></div>
-        <div class="info-item"><div class="info-label">احصائيات عامة عن الحرم المكي</div><div class="info-value">{{ dash($masjid->general_statistics) }}</div></div>
+        <div class="info-item-center">
+            <div class="info-label">التاريخ والوقت</div>
+            <div class="info-value" id="hijri-date-time">جاري التحميل...</div>
+        </div>
     </div>
     
     <div class="marquee-container">
@@ -879,14 +900,12 @@ function dash($val) {
             let html = `
                 <thead>
                     <tr>
-                        <th rowspan="2">التاريخ</th>
                         <th colspan="3">الفجر</th>
                         <th colspan="3">الظهر</th>
                         <th colspan="3">العصر</th>
                         <th colspan="3">المغرب</th>
                         <th colspan="3">العشاء</th>
                         <th colspan="3">الجمعة</th>
-                        <th rowspan="2">الحالة</th>
                     </tr>
                     <tr>
                         <th>أذان</th>
@@ -917,7 +936,6 @@ function dash($val) {
                 const dynamicStatus = getDynamicProgramStatus(program);
                  html += `
                      <tr>
-                         <td>${program.date || '-'}</td>
                          <td>${formatTime12Hour(program.adhan_fajr)}</td>
                          <td>${formatTime12Hour(program.iqama_fajr)}</td>
                          <td>${program.imam_fajr || '-'}</td>
@@ -936,7 +954,6 @@ function dash($val) {
                          <td>${formatTime12Hour(program.adhan_friday)}</td>
                          <td>${formatTime12Hour(program.iqama_friday)}</td>
                          <td>${program.imam_friday || '-'}</td>
-                         <td><span class="status-badge status-${dynamicStatus}">${dynamicStatus}</span></td>
                      </tr>
                  `;
             });
@@ -1103,18 +1120,20 @@ function dash($val) {
                 `;
             } else {
                 html += `
-                        <th>الكتاب</th>
                         <th>القسم</th>
                         <th>التخصص</th>
+                        <th>الكتاب</th>
+                        <th>الدرس</th>
                         <th>المستوى</th>
                         <th>الحالة</th>
                         <th>من</th>
                         <th>إلى</th>
                         <th>اللغة</th>
-                        <th>ملاحظات</th>
-                        <th>الموقع</th>
+                        <th>لغة الإشارة</th>
                         <th>المحاضر</th>
+                        <th>الموقع</th>
                         <th>رابط البث</th>
+                        <th>ملاحظات</th>
                 `;
             }
             
@@ -1139,7 +1158,7 @@ function dash($val) {
                                 <td>${formatTime12Hour(program.end_time)}</td>
                                 <td>${program.language || '-'}</td>
                                 <td>${program.notes || '-'}</td>
-                                <td>${program.location ? program.location.building_number : '-'}</td>
+                                <td>${program.location ? `${program.location.direction || ''} - ${program.location.building_number || ''} - ${program.location.floors_count || ''}`.replace(/^-|-$/g, '').trim() : '-'}</td>
                                 <td>${program.teacher ? program.teacher.name : '-'}</td>
                                 <td>${program.broadcast_link ? `<a href="${program.broadcast_link}" target="_blank">رابط البث</a>` : '-'}</td>
                             </tr>
@@ -1147,18 +1166,20 @@ function dash($val) {
                     } else {
                         html += `
                             <tr class="${visibilityClass}">
-                                <td>${program.book ? program.book.title : '-'}</td>
                                 <td>${program.section ? program.section.name : '-'}</td>
                                 <td>${program.major ? program.major.name : '-'}</td>
+                                <td>${program.book ? program.book.title : '-'}</td>
+                                <td>${program.lesson || '-'}</td>
                                 <td>${program.level ? program.level.name : '-'}</td>
                                 <td><span class="status-badge status-${dynamicStatus}">${dynamicStatus}</span></td>
                                 <td>${formatTime12Hour(program.start_time)}</td>
                                 <td>${formatTime12Hour(program.end_time)}</td>
                                 <td>${program.language || '-'}</td>
-                                <td>${program.notes || '-'}</td>
-                                <td>${program.location ? program.location.building_number : '-'}</td>
+                                <td>${program.sign_language_support ? 'نعم' : 'لا'}</td>
                                 <td>${program.teacher ? program.teacher.name : '-'}</td>
+                                <td>${program.location ? `${program.location.direction || ''} - ${program.location.building_number || ''} - ${program.location.floors_count || ''}`.replace(/^-|-$/g, '').trim() : '-'}</td>
                                 <td>${program.broadcast_link ? `<a href="${program.broadcast_link}" target="_blank">رابط البث</a>` : '-'}</td>
+                                <td>${program.notes || '-'}</td>
                             </tr>
                         `;
                     }
@@ -1190,10 +1211,52 @@ function dash($val) {
             }
         }
         
+        // Function to update date and time
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Update current time
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true 
+            };
+            const currentTime = now.toLocaleTimeString('ar-SA', timeOptions);
+            
+            // Update Gregorian date
+            const gregorianOptions = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long',
+                calendar: 'gregory'
+            };
+            const gregorianDate = now.toLocaleDateString('ar-SA', gregorianOptions);
+            
+            // Update Hijri date (using Intl.DateTimeFormat with Islamic calendar)
+            try {
+                const hijriOptions = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    weekday: 'long',
+                    calendar: 'islamic'
+                };
+                const hijriDate = new Intl.DateTimeFormat('ar-SA', hijriOptions).format(now);
+                const hijriDateTime = gregorianDate + ' - ' + hijriDate + ' - ' + currentTime;
+                document.getElementById('hijri-date-time').textContent = hijriDateTime;
+            } catch (e) {
+                // Fallback if Islamic calendar is not supported
+                document.getElementById('hijri-date-time').textContent = gregorianDate + ' - التاريخ الهجري غير متاح - ' + currentTime;
+            }
+        }
+        
         // Start polling for updates
         setInterval(updateAnnouncements, 10000); // Every 10 seconds
         setInterval(updatePrograms, 15000); // Every 15 seconds
         setInterval(updateTimeBasedVisibility, 30000); // Every 30 seconds for time-based visibility
+        setInterval(updateDateTime, 1000); // Every second for date/time
         
 
         // Initial update after 2 seconds to allow page to load
@@ -1201,6 +1264,7 @@ function dash($val) {
             updateAnnouncements();
             updatePrograms();
             updateTimeBasedVisibility(); // Also update visibility on initial load
+            updateDateTime(); // Initial date/time update
         }, 2000);
         
         // Update time-based visibility every 30 seconds starting after 30 seconds
@@ -1222,7 +1286,6 @@ function dash($val) {
                         <table class="imama-table">
                             <thead>
                                 <tr>
-                                    <th>التاريخ</th>
                                     <th>الفجر - أذان</th>
                                     <th>الفجر - إقامة</th>
                                     <th>الفجر - إمام</th>
@@ -1241,7 +1304,6 @@ function dash($val) {
                                     <th>الجمعة - أذان</th>
                                     <th>الجمعة - إقامة</th>
                                     <th>الجمعة - إمام</th>
-                                    <th>الحالة</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1268,18 +1330,20 @@ function dash($val) {
                                         <th>المحاضر</th>
                                         <th>رابط البث</th>
                                     @else
-                                        <th>الكتاب</th>
                                         <th>القسم</th>
                                         <th>التخصص</th>
+                                        <th>الكتاب</th>
+                                        <th>الدرس</th>
                                         <th>المستوى</th>
                                         <th>الحالة</th>
                                         <th>من</th>
                                         <th>إلى</th>
                                         <th>اللغة</th>
-                                        <th>ملاحظات</th>
-                                        <th>الموقع</th>
+                                        <th>لغة الإشارة</th>
                                         <th>المحاضر</th>
+                                        <th>الموقع</th>
                                         <th>رابط البث</th>
+                                        <th>ملاحظات</th>
                                     @endif
                                 </tr>
                             </thead>

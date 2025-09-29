@@ -28,7 +28,7 @@
                     <th style="padding:1rem 0.5rem;text-align:center;">عدد الأروقة</th>
                     <th style="padding:1rem 0.5rem;text-align:center;">عدد المصليات</th>
                     <th style="padding:1rem 0.5rem;text-align:center;">عدد الطائفين/ساعة</th>
-                    <th style="padding:1rem 0.5rem;text-align:center;">البرامج</th>
+                    
                     <th style="padding:1rem 0.5rem;text-align:center;">الإجراءات</th>
                 </tr>
             </thead>
@@ -42,11 +42,7 @@
                     <td style="padding:0.9rem 0.5rem;text-align:center;">{{ $masjid->wing_count }}</td>
                     <td style="padding:0.9rem 0.5rem;text-align:center;">{{ $masjid->prayer_hall_count }}</td>
                     <td style="padding:0.9rem 0.5rem;text-align:center;">{{ $masjid->tawaf_per_hour }}</td>
-                    <td style="padding:0.9rem 0.5rem;text-align:center;">
-                        <div class="masjids-programs-btns" style="display:flex;flex-direction:column;gap:0.25rem;align-items:center;justify-content:center;">
-                            <!-- Buttons removed as requested -->
-                        </div>
-                    </td>
+
                     <td style="padding:0.9rem 0.5rem;text-align:center;">
                         <div class="d-flex justify-content-center" style="min-width:90px;white-space:nowrap;">
                             <a href="{{ route('masjids.edit', $masjid->id) }}" class="btn btn-sm btn-warning mx-1" title="تعديل"><i class="fas fa-edit"></i></a>

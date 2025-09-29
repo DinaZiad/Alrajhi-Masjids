@@ -44,6 +44,39 @@ class MasjidController extends Controller
         return view('masjids.show', compact('masjid'));
     }
 
+    public function edit(Masjid $masjid)
+    {
+        return view('masjids.edit', compact('masjid'));
+    }
+
+    public function update(Request $request, Masjid $masjid)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'total_area' => 'nullable|string|max:255',
+            'covered_area_sqm' => 'nullable|numeric',
+            'capacity' => 'nullable|integer',
+            'gate_count' => 'nullable|integer',
+            'wing_count' => 'nullable|integer',
+            'prayer_hall_count' => 'nullable|integer',
+            'tawaf_per_hour' => 'nullable|integer',
+            'general_info' => 'nullable|string',
+            'available_services' => 'nullable|string',
+            'general_statistics' => 'nullable|string',
+            'programs_count' => 'nullable|array',
+            'current_datetime' => 'nullable|date',
+        ]);
+        
+        $masjid->update($validated);
+        return redirect()->route('masjids.index')->with('success', 'تم تحديث المسجد بنجاح');
+    }
+
+    public function destroy(Masjid $masjid)
+    {
+        $masjid->delete();
+        return redirect()->route('masjids.index')->with('success', 'تم حذف المسجد بنجاح');
+    }
+
     public function home(Masjid $masjid)
     {
         if (!$masjid) {

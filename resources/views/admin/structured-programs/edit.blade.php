@@ -945,65 +945,143 @@ function hideNonEssentialFields(hide) {
 
     // Toggle program type fields based on selection
     function toggleProgramTypeFields() {
-        const programTypeSelect = document.getElementById('program_type_id');
+        const programTypeSelect = document.querySelector('select[name="program_type_id"]');
+        const prayerFieldsSection = document.getElementById('prayer-fields-section');
         const programTitleField = document.getElementById('program_title_field');
         const programTitleInput = document.getElementById('program_title');
         
-        if (!programTypeSelect || !programTitleField) return;
-        
-        const selectedOption = programTypeSelect.options[programTypeSelect.selectedIndex];
-        const programTypeName = selectedOption ? selectedOption.text : '';
-        
-        // Check if it's حلقة تحفيظ
-        const isHalaqat = programTypeName === 'حلقة تحفيظ';
-        
-        // Show/hide program title field
-        if (isHalaqat) {
-            programTitleField.style.display = 'block';
-            programTitleInput.required = true;
-        } else {
-            programTitleField.style.display = 'none';
-            programTitleInput.required = false;
+        if (programTypeSelect) {
+            const selectedOption = programTypeSelect.options[programTypeSelect.selectedIndex];
+            const programTypeName = selectedOption ? selectedOption.text : '';
+            
+            // Handle different program types
+            if (programTypeName === 'إمامة') {
+                // Show prayer fields and hide other sections
+                if (prayerFieldsSection) prayerFieldsSection.style.display = 'block';
+                if (programTitleField) programTitleField.style.display = 'none';
+                hideNonEssentialFields(true);
+            } else if (programTypeName === 'حلقة تحفيظ') {
+                // Show program title field and hide academic fields
+                if (prayerFieldsSection) prayerFieldsSection.style.display = 'none';
+                if (programTitleField) programTitleField.style.display = 'block';
+                if (programTitleInput) {
+                    programTitleInput.placeholder = 'أدخل اسم الحلقة';
+                }
+                hideHalaqatFields(true);
+            } else {
+                // Regular programs - hide prayer fields and program title
+                if (prayerFieldsSection) prayerFieldsSection.style.display = 'none';
+                if (programTitleField) programTitleField.style.display = 'none';
+                hideNonEssentialFields(false);
+                hideHalaqatFields(false);
+            }
         }
-        
-        // Hide/show academic fields for حلقة تحفيظ
-        hideHalaqatFields(isHalaqat);
-        
-        // Handle prayer fields for إمامة
-        togglePrayerFields();
     }
     
     // Hide specific fields for حلقة تحفيظ programs
     function hideHalaqatFields(isHalaqat) {
-        const fieldsToHide = [
+        // Fields to hide for حلقات تحفيظ (only specific fields, not the whole section)
+        const halaqatFieldsToHide = [
             'select[name="section_id"]',
             'select[name="major_id"]',
             'select[name="book_id"]',
             'input[name="lesson"]'
         ];
         
-        fieldsToHide.forEach(selector => {
+        halaqatFieldsToHide.forEach(selector => {
             const field = document.querySelector(selector);
             if (field) {
-                const fieldContainer = field.closest('.col-lg-3, .col-md-6');
-                if (fieldContainer) {
-                    if (isHalaqat) {
-                        fieldContainer.style.display = 'none';
-                        // Store original required state and remove required attribute
-                        if (field.hasAttribute('required') || field.hasAttribute('data-was-required-halaqat')) {
-                            field.setAttribute('data-was-required-halaqat', 'true');
-                        }
-                        field.removeAttribute('required');
-                    } else {
-                        fieldContainer.style.display = 'block';
-                        // Restore required attribute if it was originally required
-                        if (field.getAttribute('data-was-required-halaqat') === 'true') {
-                            field.setAttribute('required', 'required');
-                        }
+                const formGroup = field.closest('.col-lg-3, .col-lg-4, .col-lg-6, .col-md-6, .col-md-12, .col-12');
+                if (formGroup) {
+                    formGroup.style.display = isHalaqat ? 'none' : 'block';
+                }
+                
+                // Handle required attribute
+                if (isHalaqat) {
+                    if (field.hasAttribute('required')) {
+                        field.setAttribute('data-was-required-halaqat', 'true');
+                    }
+                    field.removeAttribute('required');
+                } else {
+                    if (field.getAttribute('data-was-required-halaqat') === 'true') {
+                        field.setAttribute('required', 'required');
                     }
                 }
             }
         });
+    }
+
+    // Hide non-essential fields for إمامة programs
+    function hideNonEssentialFields(isImama) {
+        // Fields to hide for إمامة programs
+        const fieldsToHide = [
+            'select[name="section_id"]',
+            'select[name="major_id"]',
+            'select[name="book_id"]',
+            'input[name="lesson"]',
+            'select[name="level_id"]',
+            'select[name="teacher_id"]',
+            'select[name="location_id"]',
+            'input[name="start_time"]',
+            'input[name="end_time"]',
+            'input[name="language"]',
+            'input[name="sign_language_support"]',
+            'input[name="broadcast_link"]',
+            'input[name="start_date"]',
+            'input[name="end_date"]'
+        ];
+        
+        fieldsToHide.forEach(selector => {
+            const field = document.querySelector(selector);
+            if (field) {
+                const formGroup = field.closest('.col-lg-3, .col-lg-4, .col-lg-6, .col-md-6, .col-md-12, .col-12');
+                if (formGroup) {
+                    formGroup.style.display = isImama ? 'none' : 'block';
+                }
+                
+                // Handle required attribute
+                if (isImama) {
+                    if (field.hasAttribute('required')) {
+                        field.setAttribute('data-was-required', 'true');
+                    }
+                    field.removeAttribute('required');
+                } else {
+                    if (field.getAttribute('data-was-required') === 'true') {
+                        field.setAttribute('required', 'required');
+                    }
+                }
+            }
+        });
+        
+        // Handle weekdays checkboxes separately
+        const weekdayCheckboxes = document.querySelectorAll('input[name="weekdays[]"]');
+        weekdayCheckboxes.forEach(checkbox => {
+            const weekdaysSection = checkbox.closest('.form-section');
+            if (weekdaysSection) {
+                weekdaysSection.style.display = isImama ? 'none' : 'block';
+            }
+            
+            // Handle required attribute for weekdays
+            if (isImama) {
+                if (checkbox.hasAttribute('required')) {
+                    checkbox.setAttribute('data-was-required', 'true');
+                }
+                checkbox.removeAttribute('required');
+            } else {
+                if (checkbox.getAttribute('data-was-required') === 'true') {
+                    checkbox.setAttribute('required', 'required');
+                }
+            }
+        });
+        
+        // Handle sign language checkbox
+        const signLanguageContainer = document.querySelector('input[name="sign_language_support"]');
+        if (signLanguageContainer) {
+            const signLanguageSection = signLanguageContainer.closest('.col-12');
+            if (signLanguageSection) {
+                signLanguageSection.style.display = isImama ? 'none' : 'block';
+            }
+        }
     }
 
     // Initialize filters on page load
@@ -1050,7 +1128,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialize program type fields visibility
-    const programTypeSelect = document.getElementById('program_type_id');
+    const programTypeSelect = document.querySelector('select[name="program_type_id"]');
     if (programTypeSelect) {
         // Add event listener for program type changes
         programTypeSelect.addEventListener('change', toggleProgramTypeFields);

@@ -113,23 +113,36 @@
                                 <td>{{ $program->programType->name ?? 'غير محدد' }}</td>
                               
                                 <td class="editable-cell" data-field="status" data-id="{{ $program->id }}">
-                                 <span class="display-value">{{ $program->status ?? 'غير محدد' }}</span>
-                                 <input type="text" class="edit-input form-control" style="display: none;" value="{{ $program->status }}">
+                                 @if($program->programType && $program->programType->name === 'إمامة')
+                                     <span class="display-value" style="color: #6c757d; font-style: italic;">-</span>
+                                 @else
+                                     <span class="display-value" data-start-time="{{ $program->start_time }}" data-end-time="{{ $program->end_time }}" data-original-status="{{ $program->status ?? 'غير محدد' }}" data-weekdays="{{ json_encode($program->weekdays ?? []) }}">{{ $program->status ?? 'غير محدد' }}</span>
+                                     <input type="text" class="edit-input form-control" style="display: none;" value="{{ $program->status ?? 'غير محدد' }}">
+                                 @endif
                              </td>
                              <td class="editable-cell" data-field="notes" data-id="{{ $program->id }}">
                                  <span class="display-value">{{ $program->notes ?? 'لا توجد ملاحظات' }}</span>
                                  <input type="text" class="edit-input form-control" style="display: none;" value="{{ $program->notes }}">
                              </td>
                                 <td class="actions-col">
-                                    <button class="btn btn-sm btn-info edit-toggle" title="تعديل سريع">
-                                        <i class="fas fa-bell"></i>
-                                    </button>
-                                    <a href="{{ route('admin.structured-programs.edit', $program) }}" class="btn btn-sm btn-warning" title="تعديل"><i class="fas fa-edit"></i></a>
-                                    <form action="{{ route('admin.structured-programs.destroy', $program) }}" method="POST" style="display:inline-block;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" title="حذف" onclick="return confirm('هل أنت متأكد من حذف هذا البرنامج؟');"><i class="fas fa-trash"></i></button>
-                                    </form>
+                                    @if($program->programType && $program->programType->name === 'إمامة')
+                                        <a href="{{ route('admin.structured-programs.edit', $program) }}" class="btn btn-sm btn-warning" title="تعديل"><i class="fas fa-edit"></i></a>
+                                        <form action="{{ route('admin.structured-programs.destroy', $program) }}" method="POST" style="display:inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger" title="حذف" onclick="return confirm('هل أنت متأكد من حذف هذا البرنامج؟');"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    @else
+                                        <button class="btn btn-sm btn-info edit-toggle" title="تعديل سريع">
+                                            <i class="fas fa-bell"></i>
+                                        </button>
+                                        <a href="{{ route('admin.structured-programs.edit', $program) }}" class="btn btn-sm btn-warning" title="تعديل"><i class="fas fa-edit"></i></a>
+                                        <form action="{{ route('admin.structured-programs.destroy', $program) }}" method="POST" style="display:inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger" title="حذف" onclick="return confirm('هل أنت متأكد من حذف هذا البرنامج؟');"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -230,6 +243,37 @@
     
     tr.editing .editable-cell {
         background-color: #e3f2fd;
+    }
+    
+    /* Dynamic status colors */
+    .status-في-الموعد {
+        color: #1e3a8a;
+        font-weight: bold;
+    }
+    
+    .status-بدأت {
+        color: #28a745;
+        font-weight: bold;
+    }
+    
+    .status-انتهت {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    
+    .status-تأجلت {
+        color: #60a5fa;
+        font-weight: bold;
+    }
+    
+    .status-اختبار {
+        color: #dc2626;
+        font-weight: bold;
+    }
+    
+    .status-غير-محدد {
+        color: #6c757d;
+        font-weight: bold;
     }
     
     /* Responsive tweaks: hide less-critical columns on narrow screens */
@@ -392,6 +436,112 @@ $(document).ready(function() {
             cancelEdit(editingRow);
         }
     });
+
+    // Time-based status updates
+    function getCurrentTime() {
+        const now = new Date();
+        return now.getHours() * 60 + now.getMinutes(); // Convert to minutes since midnight
+    }
+    
+    function parseTimeToMinutes(timeString) {
+        if (!timeString || timeString === '-') return null;
+        
+        // Handle both time format (15:26) and datetime format (2025-09-30 15:26:00)
+        let timePart;
+        if (timeString.includes(' ')) {
+            // Datetime format: extract time part
+            timePart = timeString.split(' ')[1];
+        } else {
+            // Time format: use as is
+            timePart = timeString;
+        }
+        
+        const [hours, minutes] = timePart.split(':').map(Number);
+        return hours * 60 + minutes;
+    }
+    
+    function getDynamicProgramStatus(program) {
+        const currentTime = getCurrentTime();
+        const startTime = parseTimeToMinutes(program.start_time);
+        const endTime = parseTimeToMinutes(program.end_time);
+        
+        if (startTime === null || endTime === null) {
+            return program.original_status || 'غير محدد';
+        }
+        
+        // Check if today is a valid weekday for this program
+        const currentWeekday = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+        const programWeekdays = program.weekdays || [];
+        
+        // If program has specific weekdays and today is not one of them, return original status
+        if (programWeekdays.length > 0 && !programWeekdays.includes(currentWeekday)) {
+            return program.original_status || 'غير محدد';
+        }
+        
+        // If program has ended, show "انتهت" regardless of database status
+        if (currentTime > endTime) {
+            return 'انتهت';
+        }
+        
+        // If program has started but not ended, show "بدأت"
+        if (currentTime >= startTime && currentTime <= endTime) {
+            return 'بدأت';
+        }
+        
+        // For programs that haven't started yet, only change "لم تبدأ" to "في الموعد"
+        // Keep other statuses as they are (including "في الموعد" from database)
+        if (program.original_status === 'لم تبدأ') {
+            return 'في الموعد';
+        }
+        
+        // Return original status for all other cases (including manual statuses and "في الموعد")
+        return program.original_status || 'غير محدد';
+    }
+    
+    function updateProgramStatuses() {
+        $('.editable-cell[data-field="status"] .display-value').each(function() {
+            const $span = $(this);
+            const startTime = $span.data('start-time');
+            const endTime = $span.data('end-time');
+            const originalStatus = $span.data('original-status');
+            const weekdaysData = $span.data('weekdays');
+            
+            // Skip if this is an إمامة program (no data attributes means it's إمامة)
+            if (!startTime && !endTime && !originalStatus) {
+                return;
+            }
+            
+            // Parse weekdays data
+            let weekdays = [];
+            if (weekdaysData) {
+                try {
+                    weekdays = typeof weekdaysData === 'string' ? JSON.parse(weekdaysData) : weekdaysData;
+                } catch (e) {
+                    weekdays = [];
+                }
+            }
+            
+            const program = {
+                start_time: startTime,
+                end_time: endTime,
+                original_status: originalStatus,
+                weekdays: weekdays
+            };
+            
+            const dynamicStatus = getDynamicProgramStatus(program);
+            $span.text(dynamicStatus);
+            
+            // Apply color based on status
+            $span.removeClass('status-في-الموعد status-بدأت status-انتهت status-تأجلت status-اختبار status-غير-محدد');
+            $span.addClass('status-' + dynamicStatus.replace(/\s+/g, '-'));
+        });
+    }
+    
+    // Update statuses every 30 seconds
+    setInterval(updateProgramStatuses, 30000);
+    
+    // Initial update
+    updateProgramStatuses();
 });
 </script>
 @endpush

@@ -380,39 +380,26 @@ function dash($val) {
             background: var(--pure-white);
             border-radius: var(--border-radius);
             overflow: hidden;
+            table-layout: auto; /* Enable dynamic column sizing */
         }
         th, td {
             border: 1px solid var(--border-subtle);
-            padding: 0.15vw 0.2vw;
+            padding: 0.02vw 0.05vw;
             text-align: center;
+            white-space: nowrap; /* Prevent text wrapping */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
-        /* Column width consistency */
-        th:nth-child(6), td:nth-child(6) { /* من column */
-            width: 8%;
-            min-width: 8%;
+        /* Dynamic column widths based on content */
+        th, td {
+            width: auto; /* Let content determine width */
+            min-width: fit-content; /* Minimum width based on content */
+            max-width: none; /* Allow expansion */
         }
         
-        th:nth-child(7), td:nth-child(7) { /* إلى column */
-            width: 8%;
-            min-width: 8%;
-        }
         
-        th:nth-child(1), td:nth-child(1) { /* الكتاب column */
-            width: 12%;
-            min-width: 12%;
-        }
         
-        th:nth-child(4), td:nth-child(4) { /* المستوى column */
-            width: 10%;
-            min-width: 10%;
-        }
-        
-        /* Location column width for حلقة تحفيظ table (8th column) */
-        th:nth-child(8), td:nth-child(8) { 
-            width: 12%;
-            min-width: 12%;
-        }
         th {
             background: var(--primary-gradient);
             color: var(--warm-gold);
@@ -434,20 +421,12 @@ function dash($val) {
         
         .table-section table:has(th:contains("الفجر - أذان")) th,
         .table-section table:has(th:contains("الفجر - أذان")) td {
-            padding: 0.1vw 0.15vw;
+            padding: 0.02vw 0.04vw;
             font-size: 0.7vw;
             white-space: nowrap;
-            min-width: 4.5vw;
-        }
-        
-        .table-section table:has(th:contains("الفجر - أذان")) th:first-child,
-        .table-section table:has(th:contains("الفجر - أذان")) td:first-child {
-            min-width: 6vw;
-        }
-        
-        .table-section table:has(th:contains("الفجر - أذان")) th:last-child,
-        .table-section table:has(th:contains("الفجر - أذان")) td:last-child {
-            min-width: 5vw;
+            width: auto; /* Dynamic width based on content */
+            min-width: fit-content; /* Minimum width based on content */
+            max-width: none; /* Allow expansion */
         }
         
         /* Alternative approach using class-based targeting */
@@ -458,20 +437,12 @@ function dash($val) {
         
         .imama-table th,
         .imama-table td {
-            padding: 0.1vw 0.15vw !important;
+            padding: 0.02vw 0.04vw !important;
             font-size: 0.7vw !important;
             white-space: nowrap;
-            min-width: 4.5vw;
-        }
-        
-        .imama-table th:first-child,
-        .imama-table td:first-child {
-            min-width: 6vw;
-        }
-        
-        .imama-table th:last-child,
-        .imama-table td:last-child {
-            min-width: 5vw;
+            width: auto; /* Dynamic width based on content */
+            min-width: fit-content; /* Minimum width based on content */
+            max-width: none; /* Allow expansion */
         }
         
         @media (max-width: 1200px) {
@@ -481,13 +452,13 @@ function dash($val) {
             .back-button { font-size: 0.7rem; padding: 0.4rem 0.8rem; }
             .info-label, .info-value, .marquee, .table-section h4 { font-size: 0.8rem; }
             .imama-table { font-size: 0.6vw !important; }
-            .imama-table th, .imama-table td { font-size: 0.6vw !important; padding: 0.08vw 0.12vw !important; }
+            .imama-table th, .imama-table td { font-size: 0.6vw !important; padding: 0.01vw 0.03vw !important; }
         }
         @media (max-width: 900px) {
             .tables-vertical { gap: 0.3vw; }
             .table-section { width: 99vw; padding: 0.3vw; }
             .imama-table { font-size: 0.5vw !important; }
-            .imama-table th, .imama-table td { font-size: 0.5vw !important; padding: 0.06vw 0.1vw !important; }
+            .imama-table th, .imama-table td { font-size: 0.5vw !important; padding: 0.01vw 0.02vw !important; }
         }
         
         .status-badge {
@@ -651,7 +622,7 @@ function dash($val) {
        
     </div>
     <div class="info-bar">
-                <div class="image.png"><div class="info-label">المساحة الكلية</div><div class="info-value">{{ dash($masjid->total_area) }}</div></div>
+                <div class="info-item"><div class="info-label">المساحة الكلية</div><div class="info-value">{{ dash($masjid->total_area) }}</div></div>
                 <div class="info-item"><div class="info-label">الطاقة الاستيعابية</div><div class="info-value">{{ dash($masjid->capacity) }}</div></div>
                 <div class="info-item"><div class="info-label">عدد الأبواب</div><div class="info-value">{{ dash($masjid->gate_count) }}</div></div>
                 <div class="info-item"><div class="info-label">عدد الأجنحة</div><div class="info-value">{{ dash($masjid->wing_count) }}</div></div>
@@ -1240,7 +1211,6 @@ function dash($val) {
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric',
-                    weekday: 'long',
                     calendar: 'islamic'
                 };
                 const hijriDate = new Intl.DateTimeFormat('ar-SA', hijriOptions).format(now);

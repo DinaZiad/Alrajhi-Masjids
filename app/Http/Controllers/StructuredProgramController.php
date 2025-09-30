@@ -223,7 +223,7 @@ class StructuredProgramController extends Controller
         if ($isImama) {
             $rules['title'] = 'nullable|string|max:255';
         } else {
-            $rules['title'] = 'required|string|max:255';
+            $rules['title'] = 'nullable|string|max:255';
         }
 
         // Add conditional validation rules based on program type
@@ -323,7 +323,6 @@ class StructuredProgramController extends Controller
         }
 
         $validated = $request->validate($rules, [
-            'title.required' => 'عنوان البرنامج مطلوب',
             'masjid_id.required' => 'المسجد مطلوب',
             'masjid_id.exists' => 'المسجد المحدد غير موجود',
             'program_type_id.exists' => 'نوع البرنامج المحدد غير موجود',
@@ -476,7 +475,7 @@ class StructuredProgramController extends Controller
         if ($isImama) {
             $rules['title'] = 'nullable|string|max:255';
         } else {
-            $rules['title'] = 'required|string|max:255';
+            $rules['title'] = 'nullable|string|max:255';
         }
 
         // Add conditional validation rules based on program type
@@ -576,7 +575,6 @@ class StructuredProgramController extends Controller
         }
 
         $validated = $request->validate($rules, [
-            'title.required' => 'عنوان البرنامج مطلوب',
             'masjid_id.required' => 'المسجد مطلوب',
             'masjid_id.exists' => 'المسجد المحدد غير موجود',
             'program_type_id.exists' => 'نوع البرنامج المحدد غير موجود',

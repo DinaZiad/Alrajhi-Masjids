@@ -273,4 +273,81 @@ Route::get('/masjids/{masjid}/filter/all', [\App\Http\Controllers\MasjidControll
 Route::get('/api/masjids/{masjid}/announcements', [\App\Http\Controllers\MasjidController::class, 'getAnnouncementsApi'])->name('api.masjids.announcements');
 Route::get('/api/masjids/{masjid}/programs', [\App\Http\Controllers\MasjidController::class, 'getProgramsApi'])->name('api.masjids.programs');
 
+// Terminal/Command execution routes (for server management)
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/terminal', function () {
+        // Only allow super admins to access terminal
+        if (auth()->user()->role !== 'super_admin') {
+            abort(403, 'Unauthorized access to terminal');
+        }
+        
+        return view('admin.terminal');
+    })->name('admin.terminal');
+    
+    Route::post('/admin/terminal/execute', function () {
+        // Only allow super admins to execute commands
+        if (auth()->user()->role !== 'super_admin') {
+            abort(403, 'Unauthorized access to terminal');
+        }
+        
+        $command = request()->input('command');
+        
+        // Security: Only allow specific Laravel commands
+        $allowedCommands = [
+            'php artisan migrate',
+            'php artisan migrate --force',
+            'php artisan db:seed',
+            'php artisan db:seed --force',
+            'php artisan db:seed --class=PermissionSeeder',
+            'php artisan db:seed --class=AdminSeeder',
+            'php artisan db:seed --class=MasjidSeeder',
+            'php artisan cache:clear',
+            'php artisan config:clear',
+            'php artisan route:clear',
+            'php artisan view:clear',
+            'php artisan optimize',
+            'php artisan optimize:clear',
+            'composer install',
+            'composer install --no-dev --optimize-autoloader',
+            'php artisan storage:link',
+            'php artisan queue:work --stop-when-empty',
+            'php artisan schedule:run',
+        ];
+        
+        // Check if command is allowed
+        $isAllowed = false;
+        foreach ($allowedCommands as $allowedCmd) {
+            if (strpos($command, $allowedCmd) === 0) {
+                $isAllowed = true;
+                break;
+            }
+        }
+        
+        if (!$isAllowed) {
+            return response()->json([
+                'success' => false,
+                'output' => 'Command not allowed. Only specific Laravel commands are permitted.',
+                'command' => $command
+            ]);
+        }
+        
+        // Execute the command
+        $output = '';
+        $returnCode = 0;
+        
+        // Change to the project directory and execute command
+        $fullCommand = "cd " . base_path() . " && " . $command . " 2>&1";
+        
+        exec($fullCommand, $outputArray, $returnCode);
+        $output = implode("\n", $outputArray);
+        
+        return response()->json([
+            'success' => $returnCode === 0,
+            'output' => $output,
+            'command' => $command,
+            'return_code' => $returnCode
+        ]);
+    })->name('admin.terminal.execute');
+});
+
 require __DIR__.'/auth.php';

@@ -402,7 +402,7 @@
                 @if(auth()->user()->hasPermission('manage_books'))
                 <a href="{{ route('constants.books') }}" class="sider-link" title="الكتب"><i class="fas fa-book"></i></a>
                 @endif
-                @if(auth()->user()->hasPermission('manage_program_types'))
+                @if(auth()->user()->hasGeneralProgramTypesPermission())
                 <a href="{{ route('constants.program-types') }}" class="sider-link" title="المجالات"><i class="fas fa-list"></i></a>
                 @endif
                 @if(auth()->user()->hasPermission('manage_teachers'))
@@ -514,7 +514,7 @@
                         @if(auth()->user()->hasPermission('manage_books'))
                         <a href="{{ route('constants.books') }}" class="sider-link{{ request()->routeIs('constants.books*') ? ' active' : '' }}"><i class="fas fa-book"></i> <span>الكتب</span></a>
                         @endif
-                        @if(auth()->user()->hasPermission('manage_program_types'))
+                        @if(auth()->user()->hasGeneralProgramTypesPermission())
                         <a href="{{ route('constants.program-types') }}" class="sider-link{{ request()->routeIs('constants.program-types*') ? ' active' : '' }}"><i class="fas fa-list"></i> <span>المجالات</span></a>
                         @endif
                         @if(auth()->user()->hasPermission('manage_teachers'))

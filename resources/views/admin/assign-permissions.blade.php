@@ -48,15 +48,18 @@
                     
                     // Update each checkbox
                     checkboxes.forEach(checkbox => {
-                        checkbox.checked = isSuperAdmin;
-                        // Don't disable checkboxes for super_admin, just make them readonly visually
-                        checkbox.disabled = false;
-                        checkbox.readOnly = isSuperAdmin;
+                        // Only modify checkbox states if switching TO super_admin
+                        // Don't override existing states when switching away from super_admin
                         if (isSuperAdmin) {
+                            checkbox.checked = true;
                             checkbox.setAttribute('data-super-admin', 'true');
+                            checkbox.readOnly = true;
                         } else {
                             checkbox.removeAttribute('data-super-admin');
+                            checkbox.readOnly = false;
+                            // Don't change checkbox.checked - preserve existing state
                         }
+                        checkbox.disabled = false;
                     });
                 }
                 
@@ -823,8 +826,11 @@ document.addEventListener('DOMContentLoaded', function() {
         displaySuccess('تم حفظ الصلاحيات بنجاح!', errorContainer);
     }
 
-    // Initial state on page load - use the global handleRoleChange function
-    handleRoleChange();
+    // Initial state on page load - only run handleRoleChange if super_admin
+    // This preserves the checkbox states set by PHP for regular admins
+    if (adminRoleSelect.value === 'super_admin') {
+        handleRoleChange();
+    }
 
     // Listen for changes to the role select
     adminRoleSelect.addEventListener('change', handleRoleChange);

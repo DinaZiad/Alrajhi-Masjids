@@ -85,7 +85,6 @@ Route::middleware('auth')->group(function () {
                     $syncData[] = [
                         'permission_id' => $permissionId,
                         'masjid_id' => null,
-                        'structured_program_id' => null,
                         'program_type' => null,
                     ];
                 }
@@ -107,15 +106,11 @@ Route::middleware('auth')->group(function () {
                 if (isset($scopes['program_types'])) {
                     foreach ((array)$scopes['program_types'] as $programTypeId) {
                         if ($programTypeId !== null) {
-                            // Get program type name from ID
-                            $programType = \App\Models\ProgramType::find($programTypeId);
-                            if ($programType) {
-                                $syncData[] = [
-                                    'permission_id' => $permissionId,
-                                    'masjid_id' => null,
-                                    'program_type' => $programType->name,
-                                ];
-                            }
+                            $syncData[] = [
+                                'permission_id' => $permissionId,
+                                'masjid_id' => null,
+                                'program_type' => $programTypeId,
+                            ];
                         }
                     }
                 }

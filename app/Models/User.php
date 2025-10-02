@@ -95,7 +95,6 @@ class User extends Authenticatable
             'manage_levels',
             'manage_majors',
             'manage_books',
-            'manage_program_types',
             'manage_teachers',
             'manage_buildings',
             'manage_masjids'
@@ -103,6 +102,23 @@ class User extends Authenticatable
 
         return $this->permissions()
             ->whereIn('name', $constantsPermissions)
+            ->exists();
+    }
+
+    /**
+     * Check if the admin has general program types management permission (not scoped).
+     */
+    public function hasGeneralProgramTypesPermission()
+    {
+        // Super admin has all permissions
+        if ($this->role === 'super_admin') {
+            return true;
+        }
+
+        return $this->permissions()
+            ->where('name', 'manage_program_types')
+            ->whereNull('admin_permissions.masjid_id')
+            ->whereNull('admin_permissions.program_type')
             ->exists();
     }
 }

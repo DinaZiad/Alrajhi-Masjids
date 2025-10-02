@@ -144,7 +144,7 @@
                                     <li>
                                         <label class="tree-label">
                                             <input type="checkbox" 
-                                                name="permissions[15][program_types][]" 
+                                                name="permissions[23][program_types][]" 
                                                 value="{{ $type->id }}" class="permission-checkbox">
                                             إدارة {{ $type->name }}
                                         </label>
@@ -162,7 +162,7 @@
                                 <li>
                                     <label class="tree-label">
                                          <input type="checkbox" 
-                                             name="permissions[15][program]" 
+                                             name="permissions[15][general]" 
                                              value="1" class="permission-checkbox">
                                          إدارة البيانات
                                      </label>
@@ -170,7 +170,7 @@
                                 <li>
                                     <label class="tree-label">
                                          <input type="checkbox" 
-                                             name="permissions[16][program]" 
+                                             name="permissions[16][general]" 
                                              value="1" class="permission-checkbox">
                                          إضافة بيانات جديدة
                                      </label>

@@ -312,6 +312,7 @@ Route::middleware('auth')->group(function () {
             'php artisan storage:link',
             'php artisan queue:work --stop-when-empty',
             'php artisan schedule:run',
+            'reset-permissions-system',
         ];
         
         // Check if command is allowed
@@ -331,7 +332,66 @@ Route::middleware('auth')->group(function () {
             ]);
         }
         
-        // Execute the command
+        // Handle custom commands
+        if ($command === 'reset-permissions-system') {
+            try {
+                $output = "Starting permissions system reset...\n\n";
+                
+                // Step 1: Disable foreign key checks
+                \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+                $output .= "✓ Disabled foreign key checks\n";
+                
+                // Step 2: Truncate admin_permissions table
+                \DB::table('admin_permissions')->truncate();
+                $output .= "✓ Cleared admin_permissions table\n";
+                
+                // Step 3: Truncate permissions table
+                \DB::table('permissions')->truncate();
+                $output .= "✓ Cleared permissions table\n";
+                
+                // Step 4: Remove migration entries for permissions system
+                $permissionMigrations = [
+                    '2025_07_22_004130_create_permissions_table',
+                    '2025_07_22_144448_add_scope_to_permissions_table',
+                    '2025_07_22_004147_create_admin_permissions_table',
+                    '2025_07_22_005941_change_program_type_id_to_program_type_in_admin_permissions',
+                    '2025_07_22_010958_add_role_to_users_table',
+                    '2025_07_22_014431_add_note_to_users_table'
+                ];
+                
+                foreach ($permissionMigrations as $migration) {
+                    \DB::table('migrations')->where('migration', $migration)->delete();
+                    $output .= "✓ Removed migration: {$migration}\n";
+                }
+                
+                // Step 5: Re-enable foreign key checks
+                \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+                $output .= "✓ Re-enabled foreign key checks\n\n";
+                
+                $output .= "🎉 Permissions system reset completed successfully!\n";
+                $output .= "📝 Next steps:\n";
+                $output .= "   1. Run: php artisan migrate --force\n";
+                $output .= "   2. Run: php artisan db:seed --class=PermissionSeeder\n";
+                $output .= "   3. Run: php artisan db:seed --class=AdminSeeder\n";
+                
+                return response()->json([
+                    'success' => true,
+                    'output' => $output,
+                    'command' => $command,
+                    'return_code' => 0
+                ]);
+                
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'output' => "Error resetting permissions system: " . $e->getMessage(),
+                    'command' => $command,
+                    'return_code' => 1
+                ]);
+            }
+        }
+        
+        // Execute regular commands
         $output = '';
         $returnCode = 0;
         

@@ -33,6 +33,9 @@
                 <button class="quick-cmd-btn" data-command="composer install --no-dev --optimize-autoloader">
                     <i class="fas fa-download"></i> Install Dependencies
                 </button>
+                <button class="quick-cmd-btn danger-btn" data-command="reset-permissions-system">
+                    <i class="fas fa-trash-alt"></i> Reset Permissions System
+                </button>
             </div>
         </div>
 
@@ -132,6 +135,16 @@
 .quick-cmd-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.danger-btn {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    color: white !important;
+}
+
+.danger-btn:hover {
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%) !important;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
 }
 
 .command-input-section {
@@ -292,6 +305,23 @@ document.addEventListener('DOMContentLoaded', function() {
     quickCmdButtons.forEach(button => {
         button.addEventListener('click', function() {
             const command = this.getAttribute('data-command');
+            
+            // Show confirmation for dangerous commands
+            if (command === 'reset-permissions-system') {
+                const confirmed = confirm(
+                    '⚠️ WARNING: This will completely reset the permissions system!\n\n' +
+                    'This action will:\n' +
+                    '• Delete all permissions data\n' +
+                    '• Delete all admin permissions\n' +
+                    '• Remove permission migration entries\n\n' +
+                    'Are you sure you want to continue?'
+                );
+                
+                if (!confirmed) {
+                    return;
+                }
+            }
+            
             commandInput.value = command;
             executeCommand(command);
         });
